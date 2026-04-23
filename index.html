@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herrajes ROMA — Tu recorrido con Romi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<template id="__bundler_thumbnail" data-bg-color="#E8F8F2">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#E8F8F2"/>
+    <g transform="translate(600 400)">
+      <ellipse cx="0" cy="180" rx="110" ry="14" fill="#0A1F1A" opacity="0.2"/>
+      <rect x="-35" y="-10" width="70" height="180" rx="12" fill="#4a5159"/>
+      <circle cx="0" cy="-40" r="90" fill="#5d656e"/>
+      <circle cx="0" cy="-40" r="65" fill="#E8F8F2"/>
+      <circle cx="-22" cy="-45" r="11" fill="#0A1F1A"/>
+      <circle cx="22" cy="-45" r="11" fill="#0A1F1A"/>
+      <circle cx="-19" cy="-48" r="3" fill="white"/>
+      <circle cx="25" cy="-48" r="3" fill="white"/>
+      <path d="M -22 -15 Q 0 5 22 -15" stroke="#0A1F1A" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="70" cy="-80" r="22" fill="#3a3f45"/>
+    </g>
+    <text x="600" y="700" text-anchor="middle" font-family="Georgia, serif" font-size="42" font-weight="500" fill="#00684F">Herrajes ROMA</text>
+    <text x="600" y="740" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" fill="#2A3F3A" opacity="0.7">Onboarding con Romi</text>
+  </svg>
+</template>
+<style>
+  :root {
+    --primary: #00B388;
+    --primary-dark: #008F6C;
+    --primary-deeper: #00684F;
+    --primary-pale: #E8F8F2;
+    --ink: #0A1F1A;
+    --ink-soft: #2A3F3A;
+    --paper: #FAFBF9;
+    --paper-warm: #F2F5F1;
+    --line: rgba(10, 31, 26, 0.08);
+    --shadow-md: 0 12px 40px rgba(0, 104, 79, 0.12);
+    --shadow-lg: 0 30px 80px rgba(0, 104, 79, 0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ======= APP LAYOUT: contenido + panel Romi a la derecha ======= */
+  .app { height: 100vh; width: 100vw; }
+
+  /* ======= STAGE (área de contenido) ======= */
+  .stage { position: relative; overflow: hidden; background: var(--paper); width: 100vw; height: 100vh; }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    overflow-y: auto;
+    padding: 80px 440px 80px 72px;
+  }
+  .scene.active { opacity: 1 !important; transform: translateY(0) !important; pointer-events: all !important; z-index: 2; }
+  .scene:not(.active) { opacity: 0 !important; transform: translateY(20px) !important; pointer-events: none !important; z-index: 1; }
+  .scene::-webkit-scrollbar { width: 6px; }
+  .scene::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+
+  /* ======= TOPBAR ======= */
+  .topbar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 22px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 20;
+    background: linear-gradient(180deg, rgba(250,251,249,0.96), rgba(250,251,249,0));
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-logo {
+    width: 44px; height: 44px;
+    background: var(--primary);
+    color: white;
+    display: grid; place-items: center;
+    border-radius: 4px;
+    transform: rotate(45deg);
+    position: relative;
+  }
+  .brand-logo span {
+    transform: rotate(-45deg);
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+  .brand-name {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .brand-tag {
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .progress-pills { display: flex; gap: 6px; }
+  .pill {
+    width: 28px; height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    transition: all 0.4s;
+  }
+  .pill.completed { background: var(--primary); }
+  .pill.active { background: var(--primary); width: 48px; }
+
+  /* ======= CONTENEDOR CENTRAL ======= */
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .chapter-num {
+    font-size: 11px;
+    color: var(--primary);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .scene-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(38px, 4.8vw, 62px);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin-bottom: 22px;
+    text-wrap: pretty;
+  }
+  .scene-title em {
+    color: var(--primary);
+    font-style: italic;
+  }
+
+  .scene-text p {
+    font-size: 15.5px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin-bottom: 14px;
+    max-width: 60ch;
+  }
+
+  /* ======= HERO ======= */
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+  }
+  .hero-inner { text-align: center; max-width: 640px; position: relative; }
+  .hero-decor {
+    position: absolute;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+    opacity: 0.1;
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    animation: floatDecor 8s ease-in-out infinite;
+  }
+  @keyframes floatDecor {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -55%) scale(1.05); }
+  }
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: var(--primary-pale);
+    color: var(--primary-deeper);
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(52px, 7vw, 96px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    margin-bottom: 22px;
+  }
+  .hero-title em { color: var(--primary); font-style: italic; font-weight: 500; }
+  .hero-subtitle {
+    font-size: 18px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .hero-motto {
+    margin-top: 36px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--primary-deeper);
+    opacity: 0.8;
+  }
+
+  /* ======= LAYOUT 2-COL ======= */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .two-col.reverse .col-text { order: 2; }
+
+  /* ======= Timeline de historia ======= */
+  .timeline {
+    position: relative;
+    padding-left: 26px;
+    margin-top: 8px;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 8px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--primary) 0%, var(--primary-pale) 100%);
+  }
+  .tl-item {
+    position: relative;
+    padding: 6px 0 22px 18px;
+  }
+  .tl-item::before {
+    content: "";
+    position: absolute;
+    left: -24px; top: 10px;
+    width: 12px; height: 12px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 3px solid var(--paper);
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+  .tl-year {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--primary-deeper);
+    margin-bottom: 4px;
+  }
+  .tl-text {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  /* ======= Valores como chips ======= */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .value-chip {
+    padding: 18px 20px;
+    background: var(--paper-warm);
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    transition: all 0.3s;
+  }
+  .value-chip:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .value-chip .v-title {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .value-chip .v-desc {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* ======= Productos ======= */
+  .products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .prod {
+    padding: 20px 16px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .prod:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+  }
+  .prod-icon {
+    width: 48px; height: 48px;
+    margin: 0 auto 12px;
+    display: grid; place-items: center;
+    background: var(--primary-pale);
+    border-radius: 12px;
+    color: var(--primary-deeper);
+  }
+  .prod-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .prod-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+
+  /* ======= Certificación card ======= */
+  .cert-card {
+    margin-top: 24px;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--primary-pale), white);
+    border: 1px solid var(--primary);
+    border-radius: 14px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .cert-card .cert-icon {
+    width: 48px; height: 48px;
+    background: var(--primary);
+    color: white;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .cert-card .cert-title {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .cert-card .cert-sub {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
+  /* ======= Dato destacado ======= */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .stat {
+    padding: 18px;
+    background: var(--paper-warm);
+    border-radius: 12px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .stat-lbl {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ======= Sede ubicación ======= */
+  .location-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 28px;
+    border-radius: 18px;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 16px;
+  }
+  .location-address {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    color: white;
+    text-decoration: none;
+    transition: all 0.25s;
+    cursor: pointer;
+  }
+  a.location-address:hover { opacity: 0.88; transform: translateX(2px); }
+  .map-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 5px 11px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(6px);
+    transition: background 0.25s;
+  }
+  a.location-address:hover .map-hint {
+    background: rgba(255,255,255,0.28);
+  }
+  .location-detail {
+    font-size: 14px;
+    opacity: 0.9;
+    line-height: 1.5;
+  }
+  .contact-list {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    display: grid;
+    gap: 8px;
+  }
+  .contact-list .c-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    opacity: 0.95;
+  }
+
+  /* ======= Seguridad ======= */
+  .safety-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .safety-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .safety-card {
+    padding: 18px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .safety-card.danger { border-color: #F4A742; background: linear-gradient(180deg, #FFF8EC, white); }
+  .safety-card.warn   { border-color: #E76F51; background: linear-gradient(180deg, #FFF0ED, white); }
+  .safety-card .sc-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .safety-card .sc-icon {
+    width: 38px; height: 38px;
+    display: grid; place-items: center;
+    border-radius: 10px;
+    background: var(--primary-pale);
+    color: var(--primary-deeper);
+    flex-shrink: 0;
+  }
+  .safety-card.danger .sc-icon { background: #FBE3B5; color: #8A5A00; }
+  .safety-card.warn .sc-icon   { background: #F9D1C6; color: #8A2E18; }
+  .safety-card .sc-title {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .safety-card .sc-list {
+    list-style: none;
+    margin-top: 4px;
+  }
+  .safety-card .sc-list li {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .safety-card .sc-list li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 8px;
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+  }
+  .safety-card.danger .sc-list li::before { background: #F4A742; }
+  .safety-card.warn .sc-list li::before   { background: #E76F51; }
+
+  .noise-meter {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .noise-meter .nm-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  .noise-meter .nm-sub {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+  .nm-bar {
+    height: 14px;
+    background: linear-gradient(90deg, #6CD96B 0%, #F4A742 55%, #E76F51 85%, #C23B22 100%);
+    border-radius: 7px;
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .nm-marker {
+    position: absolute;
+    top: -6px;
+    transform: translateX(-50%);
+    width: 2px; height: 26px;
+    background: var(--ink);
+  }
+  .nm-marker::after {
+    content: attr(data-val);
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .nm-scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 18px;
+  }
+
+  /* ======= Final ======= */
+  .final-scene-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    margin: -80px -80px -160px;
+    padding: 80px;
+  }
+  .final-content { text-align: center; max-width: 560px; }
+  .final-icon {
+    width: 86px; height: 86px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    margin: 0 auto 28px;
+    font-size: 40px;
+    backdrop-filter: blur(10px);
+  }
+  .final-title {
+    font-family: 'Fraunces', serif;
+    font-size: 60px;
+    font-weight: 500;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  .final-text {
+    font-size: 17px;
+    opacity: 0.95;
+    line-height: 1.6;
+  }
+
+  /* ====================================================== */
+  /* ============ ROMI FLOTANTE + GLOBOS GLASS ========== */
+  .romi-panel {
+    position: fixed;
+    z-index: 50;
+    bottom: 24px;
+    right: 24px;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    pointer-events: none;
+  }
+
+  .romi-panel > * { pointer-events: auto; }
+
+  /* ===== Zona Romi ===== */
+  .romi-zone {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-end;
+  }
+  .romi-stage {
+    width: 108px; height: 118px;
+    position: relative;
+    flex-shrink: 0;
+    order: 2;
+  }
+  .romi-shadow {
+    position: absolute;
+    bottom: 2px; left: 50%;
+    transform: translateX(-50%);
+    width: 58px; height: 8px;
+    background: rgba(10, 31, 26, 0.3);
+    border-radius: 50%;
+    filter: blur(5px);
+    animation: romiShadow 2.8s ease-in-out infinite;
+  }
+  .romi {
+    width: 108px;
+    animation: romiBob 2.8s ease-in-out infinite;
+    transform-origin: 70px 18px;
+    filter: drop-shadow(0 10px 24px rgba(10,31,26,0.25));
+  }
+  .romi.happy    { animation: romiHappy 0.8s ease-in-out; }
+  .romi.waving   .romi-arm-right { animation: romiWave 1.2s ease-in-out infinite; transform-origin: 92px 95px; }
+  .romi.thinking .romi-arm-left  { animation: romiThink 1.5s ease-in-out infinite; transform-origin: 38px 95px; }
+  .romi.rolling  { animation: romiSlide 2.4s ease-in-out infinite; }
+
+  @keyframes romiBob {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-2deg); }
+    75% { transform: rotate(2deg); }
+  }
+  @keyframes romiShadow {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+    50%      { transform: translateX(-50%) scale(0.85); opacity: 0.3; }
+  }
+  @keyframes romiHappy {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    40% { transform: translateY(-10px) rotate(-4deg); }
+    70% { transform: translateY(-4px) rotate(3deg); }
+  }
+  @keyframes romiWave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-28deg); }
+    75% { transform: rotate(28deg); }
+  }
+  @keyframes romiThink {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-18deg) translateY(-3px); }
+  }
+  @keyframes romiSlide {
+    0%, 100% { transform: translateX(-6px); }
+    50%      { transform: translateX(6px); }
+  }
+
+  .romi-eye { animation: romiBlink 4s infinite; transform-origin: center; }
+  .romi-eye.right { animation-delay: 0.05s; }
+  @keyframes romiBlink {
+    0%, 94%, 100% { transform: scaleY(1); }
+    96%, 98% { transform: scaleY(0.1); }
+  }
+  .romi-mouth { transition: all 0.3s; stroke: #0A1F1A; }
+
+  /* Etiqueta al costado de Romi, vertical */
+  .romi-name-tag {
+    order: 1;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 5px 12px;
+    border-radius: 14px;
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary-deeper);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    box-shadow: 0 6px 16px rgba(10,31,26,0.1);
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+  .romi-name-tag .status-dot {
+    width: 6px; height: 6px;
+    background: #6CD96B;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2.5px rgba(108, 217, 107, 0.3);
+    animation: pulseDot 2s ease-in-out infinite;
+  }
+  .romi-name-tag .role {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  @keyframes pulseDot {
+    0%, 100% { box-shadow: 0 0 0 2.5px rgba(108, 217, 107, 0.3); }
+    50% { box-shadow: 0 0 0 5px rgba(108, 217, 107, 0.08); }
+  }
+
+  /* ===== Chat area (encima de Romi, globos flotando) ===== */
+  .chat-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+    max-height: 50vh;
+    min-height: 0;
+  }
+
+  .chat-msgs {
+    overflow-y: auto;
+    max-height: 32vh;
+    padding: 4px 4px 4px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    scroll-behavior: smooth;
+    mask-image: linear-gradient(180deg, transparent 0, black 28px, black 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, black 28px, black 100%);
+  }
+  .chat-msgs::-webkit-scrollbar { width: 3px; }
+  .chat-msgs::-webkit-scrollbar-thumb { background: rgba(10,31,26,0.15); border-radius: 2px; }
+
+  /* ===== GLOBO DE ROMI con cola a la derecha (apunta hacia Romi abajo) ===== */
+  .chat-bubble {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 10px 14px;
+    border-radius: 16px 16px 4px 16px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink);
+    max-width: 90%;
+    box-shadow: 0 8px 24px rgba(10,31,26,0.12);
+    border: 1px solid rgba(255,255,255,0.55);
+    animation: msgIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    margin-right: 8px;
+  }
+  .chat-bubble::before {
+    content: "";
+    position: absolute;
+    right: -6px;
+    bottom: 5px;
+    width: 12px; height: 12px;
+    background: inherit;
+    border-right: 1px solid rgba(255,255,255,0.55);
+    border-bottom: 1px solid rgba(10,31,26,0.05);
+    border-radius: 0 0 3px 0;
+    transform: rotate(45deg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .chat-bubble.question {
+    background: rgba(232, 248, 242, 0.92);
+    border-color: rgba(0, 179, 136, 0.3);
+  }
+  .chat-bubble strong { color: var(--primary-deeper); font-weight: 600; }
+
+  /* ===== GLOBO DEL USUARIO ===== */
+  .chat-user {
+    align-self: flex-end;
+    background: var(--primary);
+    color: white;
+    padding: 9px 14px;
+    border-radius: 16px 16px 4px 16px;
+    font-size: 13.5px;
+    font-weight: 500;
+    max-width: 85%;
+    line-height: 1.45;
+    box-shadow: 0 8px 24px rgba(0, 104, 79, 0.3);
+    animation: msgIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    margin-right: 8px;
+  }
+  .chat-user::before {
+    content: "";
+    position: absolute;
+    right: -5px;
+    bottom: 5px;
+    width: 12px; height: 12px;
+    background: var(--primary);
+    border-radius: 0 0 3px 0;
+    transform: rotate(45deg);
+  }
+
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .typing-bubble {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(14px);
+    padding: 10px 14px;
+    border-radius: 16px 16px 4px 16px;
+    display: inline-flex;
+    gap: 4px;
+    width: fit-content;
+    border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: 0 8px 24px rgba(10,31,26,0.12);
+    position: relative;
+    margin-right: 8px;
+  }
+  .typing-bubble::before {
+    content: "";
+    position: absolute;
+    right: -6px; bottom: 5px;
+    width: 12px; height: 12px;
+    background: rgba(255,255,255,0.9);
+    border-right: 1px solid rgba(255,255,255,0.55);
+    border-bottom: 1px solid rgba(10,31,26,0.05);
+    border-radius: 0 0 3px 0;
+    transform: rotate(45deg);
+  }
+  .typing-bubble span {
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: typing 1.4s infinite;
+  }
+  .typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+
+  /* ===== Input (glass) ===== */
+  .chat-input {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+  }
+  .quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+  .qr-btn {
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--primary);
+    color: var(--primary-deeper);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    box-shadow: 0 4px 10px rgba(10,31,26,0.08);
+  }
+  .qr-btn:hover { background: var(--primary); color: white; }
+
+  .input-row {
+    display: flex;
+    gap: 6px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 14px;
+    padding: 3px 3px 3px 14px;
+    border: 1.5px solid rgba(0, 104, 79, 0.15);
+    transition: all 0.2s;
+    box-shadow: 0 8px 24px rgba(10,31,26,0.1);
+    width: 100%;
+  }
+  .input-row:focus-within { border-color: var(--primary); background: white; }
+  .input-row input {
+    flex: 1;
+    border: none;
+    background: none;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 0;
+    color: var(--ink);
+    min-width: 0;
+  }
+  .input-row input::placeholder { color: #94A39E; }
+  .send {
+    width: 32px; height: 32px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    border-radius: 9px;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .send:hover { transform: scale(1.05); background: var(--primary-dark); }
+
+  .continue-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 8px 22px rgba(0, 104, 79, 0.3);
+    width: 100%;
+  }
+  .continue-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+  }
+
+  /* Collapse toggle: permite minimizar el chat para ver la diapositiva */
+  .chat-collapse {
+    position: absolute;
+    top: -6px;
+    right: 6px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: grid; place-items: center;
+    font-size: 14px;
+    z-index: 5;
+    box-shadow: 0 4px 10px rgba(10,31,26,0.1);
+    transition: all 0.2s;
+  }
+  .chat-collapse:hover { color: var(--primary-deeper); border-color: var(--primary); }
+
+  .romi-panel.collapsed .chat-area { display: none; }
+  .romi-panel.collapsed .romi-name-tag { display: none; }
+  .romi-panel.collapsed .chat-collapse { top: -6px; right: 4px; }
+
+  /* Toggle mobile (no hace falta, el panel ya es flotante) */
+  .chat-toggle, .chat-close, .chat-preview { display: none; }
+
+  /* ======= Data FAB ======= */
+  .data-fab {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--line);
+    padding: 9px 14px;
+    border-radius: 22px;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    z-index: 25;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .data-fab:hover { color: var(--primary-deeper); }
+  .data-fab .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; }
+
+  .data-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 31, 26, 0.5);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .data-modal.open { display: flex; }
+  .data-content {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+  }
+  .data-content h3 { font-family: 'Fraunces', serif; font-size: 24px; margin-bottom: 6px; }
+  .data-content .sub { color: var(--ink-soft); font-size: 13px; margin-bottom: 24px; }
+  .data-row {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .data-row:last-child { border: none; }
+  .data-key { font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+  .data-val { font-size: 14px; font-weight: 500; text-align: right; }
+  .data-val.empty { color: #B5BFB9; font-weight: 400; font-style: italic; }
+  .close-x {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--paper-warm);
+    border: none;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--ink-soft);
+  }
+
+  /* ======= Responsive ======= */
+  @media (max-width: 1100px) {
+    .scene { padding: 80px 400px 80px 48px; }
+  }
+
+  @media (max-width: 900px) {
+    html, body { height: 100%; overflow: hidden; }
+    .scene { padding: 70px 20px 280px; }
+    .two-col { grid-template-columns: 1fr; gap: 30px; }
+    .two-col.reverse .col-text { order: 0; }
+    .safety-hero { grid-template-columns: 1fr; }
+    .products { grid-template-columns: 1fr 1fr; }
+    .stat-row { grid-template-columns: 1fr 1fr 1fr; }
+    .topbar { padding: 14px 16px; }
+    .brand-tag { display: none; }
+    .data-fab { right: 16px; top: 14px; font-size: 11px; padding: 7px 12px; }
+
+    .romi-panel {
+      bottom: 16px;
+      right: 16px;
+      left: 16px;
+      width: auto;
+      max-width: none;
+    }
+    .romi-stage { width: 95px; height: 105px; }
+    .romi { width: 95px; }
+    .chat-msgs { max-height: 28vh; }
+  }
+
+  @media (max-width: 520px) {
+    .hero-title { font-size: 52px; }
+    .scene-title { font-size: 36px; }
+    .products { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr; }
+    .values-grid { grid-template-columns: 1fr; }
+    .safety-grid { grid-template-columns: 1fr; }
+    .scene { padding: 60px 18px 300px; }
+    .wrap { padding: 0; }
+    .romi-stage { width: 80px; height: 90px; }
+    .romi { width: 80px; }
+    .romi-name-tag { font-size: 12px; padding: 4px 9px; }
+    .romi-name-tag .role { display: none; }
+    .chat-msgs { max-height: 24vh; }
+    .chat-bubble, .chat-user { font-size: 13px; }
+  }
+
+  </style>
+</head>
+<body>
+
+<!-- ============ STAGE ============ -->
+<div class="app">
+<section class="stage">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo"><span>R</span></div>
+      <div>
+        <div class="brand-name">Herrajes ROMA</div>
+        <div class="brand-tag">La marca del movimiento · desde 1968</div>
+      </div>
+    </div>
+    <div class="progress-pills" id="pills"></div>
+  </div>
+
+  <!-- ========== ESCENA 0: Bienvenida ========== -->
+  <div class="scene active" data-scene="0">
+    <div class="wrap hero">
+      <div class="hero-inner">
+        <div class="hero-decor"></div>
+        <div class="hero-badge">Inducción de personal</div>
+        <h1 class="hero-title">Bienvenido<br>a <em>ROMA</em></h1>
+        <p class="hero-subtitle">Somos la empresa argentina referente en herrajes para el movimiento. Te vamos a acompañar en un recorrido para que conozcas la casa.</p>
+        <div class="hero-motto">"La marca del movimiento desde 1968"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 1: La Empresa ========== -->
+  <div class="scene" data-scene="1">
+    <div class="wrap two-col">
+      <div class="col-text">
+        <div class="chapter-num">Capítulo 01 — La empresa</div>
+        <h2 class="scene-title">Somos <em>movimiento</em><br>argentino</h2>
+        <div class="scene-text">
+          <p>Somos una empresa argentina que le ofrece al mercado local y al Mercosur una amplia línea de herrajes para puertas y portones de carpintería metálica y madera: corredizos, levadizos y batientes. También herrajes para lonas de camiones siders, puertas de paso, placard y puertas automáticas.</p>
+          <p>Nuestros esfuerzos están dedicados a ofrecer una solución adecuada a cada proyecto de movimiento, con la más alta tecnología, selección de materiales y calidez en el proceso de compra.</p>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L4 6 v6 c0 5 3.5 9 8 10 4.5-1 8-5 8-10 V6z"/><path d="M9 12 l2 2 4-4"/></svg>
+          </div>
+          <div>
+            <div class="cert-title">ISO 9001:2015 · TÜV Rheinland</div>
+            <div class="cert-sub">Certificados desde 2018 en Sistemas de Gestión de Calidad</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-text">
+        <div class="products">
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg></div>
+            <div class="prod-name">Corredizos</div>
+            <div class="prod-desc">Puertas y portones</div>
+          </div>
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V8l8-4 8 4v12"/><path d="M9 20v-8h6v8"/></svg></div>
+            <div class="prod-name">Levadizos</div>
+            <div class="prod-desc">Portones batientes</div>
+          </div>
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8" cy="12" r="1.5"/><circle cx="16" cy="12" r="1.5"/></svg></div>
+            <div class="prod-name">Camiones siders</div>
+            <div class="prod-desc">Herrajes para lonas</div>
+          </div>
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="1"/><circle cx="15" cy="12" r="1"/></svg></div>
+            <div class="prod-name">Puertas de paso</div>
+            <div class="prod-desc">y placard</div>
+          </div>
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8h16M4 16h16"/><circle cx="8" cy="8" r="2"/><circle cx="16" cy="16" r="2"/></svg></div>
+            <div class="prod-name">Automatización</div>
+            <div class="prod-desc">Puertas y portones</div>
+          </div>
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="4"/></svg></div>
+            <div class="prod-name">ROMA Labs</div>
+            <div class="prod-desc">Soluciones a medida</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 2: Historia ========== -->
+  <div class="scene" data-scene="2">
+    <div class="wrap two-col reverse">
+      <div class="col-text">
+        <div class="chapter-num">Capítulo 02 — Historia</div>
+        <h2 class="scene-title">De un taller<br>italiano a <em>líderes</em><br>del mercado</h2>
+        <div class="scene-text">
+          <p>Herrajes ROMA es una empresa nacional fundada por inmigrantes italianos. Ángelo Tregnaghi y su hermano Aquiles comenzaron con un taller de patas de hierro para máquinas de coser.</p>
+          <p>Hoy, tres generaciones después, seguimos cuidando lo que nos hizo grandes: el oficio, la innovación y el compromiso con la industria nacional.</p>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">1968</div><div class="stat-lbl">Fundación</div></div>
+          <div class="stat"><div class="stat-num">3</div><div class="stat-lbl">Generaciones</div></div>
+          <div class="stat"><div class="stat-num">+45</div><div class="stat-lbl">Años liderazgo</div></div>
+        </div>
+      </div>
+      <div class="col-text">
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-year">Años '60</div>
+            <div class="tl-text">Ángelo y Aquiles Tregnaghi fundan un taller de patas de hierro para máquinas de coser.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">1968</div>
+            <div class="tl-text">En la esquina de Roca y Talcahuano nace <strong>Herrajes ROMA</strong>, con foco en la industria metalúrgica.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">Década del '80</div>
+            <div class="tl-text">Junto a su hijo Fernando, diversifican las soluciones de movimiento y se transforman en empresa líder del mercado argentino.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">Años '90</div>
+            <div class="tl-text">Expansión tecnológica y apertura de nuevos mercados: kits de herrajes, frentes de placard y complementos para cocinas.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">Nuevo siglo</div>
+            <div class="tl-text">Andrés Tregnaghi toma la posta: más profesionalización, más metros cuadrados, más innovación anual.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 3: Política de Calidad y Valores ========== -->
+  <div class="scene" data-scene="3">
+    <div class="wrap two-col">
+      <div class="col-text">
+        <div class="chapter-num">Capítulo 03 — Política de calidad</div>
+        <h2 class="scene-title">Lo que nos<br><em>mueve</em> cada día</h2>
+        <div class="scene-text">
+          <p><strong>Nuestro compromiso:</strong> diseño, venta y fabricación de rieles y carros estándar para puertas corredizas, ruedas estándar y estabilizadores para portones.</p>
+          <p>Desde 2018 certificamos ISO 9001:2015, asumiendo el compromiso de mejora continua y superación de las expectativas de nuestros clientes.</p>
+        </div>
+      </div>
+      <div class="col-text">
+        <div class="values-grid">
+          <div class="value-chip">
+            <div class="v-title">Diseño</div>
+            <div class="v-desc">Pensamos cada solución desde la funcionalidad y la estética.</div>
+          </div>
+          <div class="value-chip">
+            <div class="v-title">Calidad</div>
+            <div class="v-desc">Materiales seleccionados y procesos certificados.</div>
+          </div>
+          <div class="value-chip">
+            <div class="v-title">Innovación</div>
+            <div class="v-desc">Nuevos productos cada año para liderar el mercado.</div>
+          </div>
+          <div class="value-chip">
+            <div class="v-title">Compromiso</div>
+            <div class="v-desc">Con la industria nacional y con cada cliente.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 4: Sede y contacto ========== -->
+  <div class="scene" data-scene="4">
+    <div class="wrap two-col reverse">
+      <div class="col-text">
+        <div class="chapter-num">Capítulo 04 — Dónde estamos</div>
+        <h2 class="scene-title">Nuestra <em>casa</em></h2>
+        <div class="scene-text">
+          <p>La sede de Herrajes ROMA está en Florida, provincia de Buenos Aires. Acá funcionan la fábrica, las oficinas y el laboratorio ROMA Labs.</p>
+          <p>Si necesitás contactar a un área específica, cada equipo tiene su interno directo. Te lo mostramos en la próxima pantalla.</p>
+        </div>
+      </div>
+      <div class="col-text">
+        <div class="location-card">
+          <a class="location-address" href="https://www.google.com/maps/search/?api=1&query=Gral.+Roca+4615,+Florida,+Buenos+Aires,+Argentina" target="_blank" rel="noopener">
+            📍 Gral. Roca 4615<br>(B1604BZS) Florida
+            <span class="map-hint">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Ver en Google Maps
+            </span>
+          </a>
+          <div class="location-detail">Buenos Aires · Argentina</div>
+          <div class="contact-list">
+            <div class="c-row">📞 (54-11) 4761-4701</div>
+            <div class="c-row">📞 (54-11) 4761-9862 / 4760-2971</div>
+            <div class="c-row">✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3b4d5e554f5a487b535e49495a515e484954565a15585456155a49">[email&#160;protected]</a></div>
+          </div>
+        </div>
+        <div class="cert-card" style="margin-top:14px">
+          <div class="cert-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <div class="cert-title">Responsabilidad Social</div>
+            <div class="cert-sub">Participamos del programa de reciclado de la Fundación Garrahan.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 5: Seguridad ========== -->
+  <div class="scene" data-scene="5">
+    <div class="wrap">
+      <div class="chapter-num">Capítulo 05 — Seguridad</div>
+      <h2 class="scene-title">Tu seguridad es<br>nuestra <em>prioridad</em></h2>
+
+      <div class="safety-hero">
+        <div class="scene-text">
+          <p>En la fábrica convivimos con dos riesgos principales: <strong>riesgo eléctrico</strong> y <strong>exposición a ruido</strong>. Lo importante: conocer las reglas básicas y usar siempre los elementos de protección.</p>
+        </div>
+        <div class="noise-meter">
+          <div class="nm-title">Medidor de ruido</div>
+          <div class="nm-sub">Límite legal de exposición laboral: 85 dB (8 h)</div>
+          <div class="nm-bar">
+            <div class="nm-marker" style="left: 40%" data-val="60 dB · oficina"></div>
+            <div class="nm-marker" style="left: 66%" data-val="85 dB · límite"></div>
+            <div class="nm-marker" style="left: 88%" data-val="100 dB · fábrica"></div>
+          </div>
+          <div class="nm-scale">
+            <span>40</span><span>60</span><span>80</span><span>100</span><span>120 dB</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="safety-grid">
+        <div class="safety-card danger">
+          <div class="sc-head">
+            <div class="sc-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 L4 14 h7 l-1 8 9-12 h-7 z"/></svg>
+            </div>
+            <div class="sc-title">Riesgo eléctrico</div>
+          </div>
+          <ul class="sc-list">
+            <li>No manipular tableros ni equipos energizados sin autorización.</li>
+            <li>Reportar inmediatamente cables dañados o enchufes sueltos.</li>
+            <li>No mojar zonas con instalación eléctrica activa.</li>
+            <li>Solo personal capacitado puede intervenir conexiones.</li>
+          </ul>
+        </div>
+        <div class="safety-card warn">
+          <div class="sc-head">
+            <div class="sc-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12c2-5 7-8 9-8s7 3 9 8-7 8-9 8-7-3-9-8z"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <div class="sc-title">Exposición a ruido</div>
+          </div>
+          <ul class="sc-list">
+            <li>Protectores auditivos obligatorios en zonas señalizadas.</li>
+            <li>Exposición controlada: máximo 8 h a 85 dB.</li>
+            <li>Si no te escuchás hablar normal, ponete protección.</li>
+            <li>Chequeos auditivos periódicos por Salud Ocupacional.</li>
+          </ul>
+        </div>
+        <div class="safety-card">
+          <div class="sc-head">
+            <div class="sc-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L4 7v6c0 5 3 8 8 9 5-1 8-4 8-9V7z"/></svg>
+            </div>
+            <div class="sc-title">EPP obligatorio</div>
+          </div>
+          <ul class="sc-list">
+            <li>Casco, calzado de seguridad y lentes en zonas operativas.</li>
+            <li>Guantes y protección auditiva según tarea.</li>
+            <li>Ropa adecuada (sin sueltos cerca de máquinas).</li>
+          </ul>
+        </div>
+        <div class="safety-card">
+          <div class="sc-head">
+            <div class="sc-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 v20 M2 12 h20"/></svg>
+            </div>
+            <div class="sc-title">Emergencias</div>
+          </div>
+          <ul class="sc-list">
+            <li>Conocé la salida de emergencia más cercana a tu sector.</li>
+            <li>Ante incidente: alertar a Mantenimiento (interno 122).</li>
+            <li>Simulacros periódicos: participación obligatoria.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 6: Cierre ========== -->
+  <div class="scene" data-scene="6">
+    <div class="final-scene-wrap">
+      <div class="final-content">
+        <div class="final-icon">🎉</div>
+        <h2 class="final-title" id="finalTitle">¡Bienvenido<br>a Herrajes ROMA!</h2>
+        <p class="final-text">Esperamos que hayas disfrutado el recorrido. Todo lo que me contaste nos va a ayudar a que tu experiencia acá sea inolvidable.</p>
+        <div class="hero-motto" style="margin-top: 32px; opacity: 0.85; color: white;">"La marca del movimiento desde 1968"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROMI PANEL LATERAL ============ -->
+<aside class="romi-panel" id="romiPanel">
+  <button class="chat-collapse" onclick="toggleCollapse()" aria-label="Minimizar">
+    <svg id="collapseIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="romi-zone">
+    <div class="romi-stage">
+      <div class="romi-shadow"></div>
+      <svg class="romi" id="romi" viewBox="0 0 140 150" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4a5159"/>
+          <stop offset="40%" stop-color="#5d656e"/>
+          <stop offset="60%" stop-color="#5d656e"/>
+          <stop offset="100%" stop-color="#333840"/>
+        </linearGradient>
+        <radialGradient id="wheelGrad" cx="0.35" cy="0.32" r="0.85">
+          <stop offset="0%" stop-color="#6a7278"/>
+          <stop offset="55%" stop-color="#3a3f45"/>
+          <stop offset="100%" stop-color="#1f2226"/>
+        </radialGradient>
+        <radialGradient id="faceGrad" cx="0.5" cy="0.4" r="0.7">
+          <stop offset="0%" stop-color="#F5FBF8"/>
+          <stop offset="100%" stop-color="#D5EDE2"/>
+        </radialGradient>
+        <radialGradient id="hubGrad" cx="0.35" cy="0.35" r="0.7">
+          <stop offset="0%" stop-color="#5a6168"/>
+          <stop offset="100%" stop-color="#23262a"/>
+        </radialGradient>
+        <linearGradient id="handGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFE9C7"/>
+          <stop offset="100%" stop-color="#F0C98E"/>
+        </linearGradient>
+      </defs>
+
+      <path d="M 66 22 Q 64 10, 74 8 Q 84 8, 84 18 L 84 26" fill="none" stroke="#2a2e33" stroke-width="4" stroke-linecap="round"/>
+      <path d="M 66 22 Q 64 10, 74 8 Q 84 8, 84 18 L 84 26" fill="none" stroke="#5d656e" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+
+      <g class="romi-arm-left">
+        <path d="M 58 82 Q 44 86, 36 96" stroke="#333840" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M 58 82 Q 44 86, 36 96" stroke="#5d656e" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <circle cx="35" cy="97" r="7" fill="url(#handGrad)" stroke="#333840" stroke-width="1.5"/>
+        <path d="M 31 94 L 29 91 M 33 92 L 31 89 M 36 91 L 35 88" stroke="#a57848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7"/>
+      </g>
+
+      <g class="romi-arm-right">
+        <path d="M 82 82 Q 96 80, 106 72" stroke="#333840" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M 82 82 Q 96 80, 106 72" stroke="#5d656e" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <circle cx="107" cy="71" r="7" fill="url(#handGrad)" stroke="#333840" stroke-width="1.5"/>
+        <path d="M 112 70 L 114 67 M 110 67 L 112 64 M 107 65 L 107 62" stroke="#a57848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7"/>
+      </g>
+
+      <g id="romi-body">
+        <rect x="57" y="56" width="26" height="84" rx="5" fill="#1a1c1e" opacity="0.35" transform="translate(1.5, 2.5)"/>
+        <rect x="57" y="56" width="26" height="84" rx="5" fill="url(#barGrad)"/>
+        <rect x="59.5" y="58" width="2.5" height="80" rx="1.2" fill="#8a9198" opacity="0.5"/>
+        <rect x="78.5" y="58" width="2.5" height="80" rx="1.2" fill="#1a1c1e" opacity="0.45"/>
+        <g>
+          <circle cx="70" cy="92" r="4" fill="#1a1c1e"/>
+          <circle cx="70" cy="92" r="4" fill="none" stroke="#8a9198" stroke-width="0.6" opacity="0.5"/>
+          <circle cx="69" cy="91" r="1" fill="#a5acb2" opacity="0.75"/>
+        </g>
+        <g>
+          <circle cx="70" cy="126" r="4" fill="#1a1c1e"/>
+          <circle cx="70" cy="126" r="4" fill="none" stroke="#8a9198" stroke-width="0.6" opacity="0.5"/>
+          <circle cx="69" cy="125" r="1" fill="#a5acb2" opacity="0.75"/>
+        </g>
+      </g>
+
+      <g id="romi-head">
+        <circle cx="70" cy="46" r="30" fill="url(#wheelGrad)"/>
+        <circle cx="70" cy="46" r="30" fill="none" stroke="#1a1c1e" stroke-width="1"/>
+        <circle cx="70" cy="46" r="25" fill="none" stroke="#8a9198" stroke-width="0.8" opacity="0.4"/>
+        <circle cx="70" cy="46" r="21" fill="url(#faceGrad)"/>
+        <circle cx="70" cy="46" r="21" fill="none" stroke="#00684F" stroke-width="1.2" opacity="0.35"/>
+        <ellipse cx="64" cy="38" rx="9" ry="4" fill="white" opacity="0.5"/>
+
+        <g class="romi-eye left">
+          <ellipse cx="62.5" cy="45" rx="4" ry="5" fill="white" stroke="#0A1F1A" stroke-width="0.8"/>
+          <circle cx="63" cy="46" r="2.6" fill="#0A1F1A"/>
+          <circle cx="63.8" cy="44.8" r="0.9" fill="white"/>
+        </g>
+        <g class="romi-eye right">
+          <ellipse cx="77.5" cy="45" rx="4" ry="5" fill="white" stroke="#0A1F1A" stroke-width="0.8"/>
+          <circle cx="78" cy="46" r="2.6" fill="#0A1F1A"/>
+          <circle cx="78.8" cy="44.8" r="0.9" fill="white"/>
+        </g>
+
+        <path d="M 58 38 Q 62 36.5, 66 38" stroke="#0A1F1A" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.85"/>
+        <path d="M 74 38 Q 78 36.5, 82 38" stroke="#0A1F1A" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.85"/>
+
+        <circle cx="57" cy="53" r="2.2" fill="#FF8FA9" opacity="0.5"/>
+        <circle cx="83" cy="53" r="2.2" fill="#FF8FA9" opacity="0.5"/>
+
+        <path class="romi-mouth" id="romiMouth" d="M 64 55 Q 70 60, 76 55" fill="none" stroke-width="2" stroke-linecap="round"/>
+
+        <g>
+          <circle cx="92" cy="28" r="8" fill="url(#hubGrad)"/>
+          <circle cx="92" cy="28" r="8" fill="none" stroke="#15171a" stroke-width="0.8"/>
+          <circle cx="92" cy="28" r="5" fill="none" stroke="#8a9198" stroke-width="0.5" opacity="0.5"/>
+          <circle cx="90" cy="26" r="1.4" fill="#a5acb2" opacity="0.75"/>
+        </g>
+
+        <g id="romi-tie">
+          <path d="M 63 73 L 67 69 L 67 76 Z" fill="#00684F"/>
+          <path d="M 77 73 L 73 69 L 73 76 Z" fill="#00684F"/>
+          <rect x="67" y="70" width="6" height="5" rx="0.8" fill="#00B388"/>
+          <rect x="69" y="70" width="2" height="5" fill="#00684F" opacity="0.5"/>
+        </g>
+      </g>
+    </svg>
+    </div>
+    <div class="romi-name-tag">
+      <span class="status-dot"></span>
+      Romi
+      <span class="role">· tu guía</span>
+    </div>
+  </div>
+
+  <div class="chat-area">
+    <div class="chat-msgs" id="botBody"></div>
+    <div class="chat-input">
+      <div class="quick-replies" id="quickReplies"></div>
+      <div id="inputContainer">
+        <div class="input-row">
+          <input type="text" id="userInput" placeholder="Escribí tu respuesta..." autocomplete="off">
+          <button class="send" onclick="sendMessage()" aria-label="Enviar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+</div><!-- /.app -->
+
+<!-- Mobile: botón flotante para abrir el chat -->
+<button class="chat-toggle" id="chatToggle" onclick="openChat()" aria-label="Abrir chat con Romi">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <span class="badge" id="chatBadge" style="display:none">•</span>
+</button>
+
+<!-- Mobile: preview del último mensaje -->
+<div class="chat-preview" id="chatPreview"></div>
+
+<!-- ====== DATA FAB & MODAL ====== -->
+<button class="data-fab" onclick="toggleData()">
+  <span class="dot"></span> Mis datos
+</button>
+
+<div class="data-modal" id="dataModal" onclick="if(event.target===this)toggleData()">
+  <div class="data-content">
+    <button class="close-x" onclick="toggleData()">×</button>
+    <h3>Tus datos</h3>
+    <div class="sub">Información que Romi recolectó durante el recorrido</div>
+    <div id="dataList"></div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const userData = {
+    nombre: null, experiencia: null, area: null,
+    localidad: null, direccion: null, email: null, telefono: null,
+    estadoCivil: null, hijos: null, hobby: null, deporte: null, salud: null,
+  };
+  const labels = {
+    nombre: 'Nombre', experiencia: 'Experiencia', area: 'Área',
+    localidad: 'Localidad', direccion: 'Dirección', email: 'Email', telefono: 'Teléfono',
+    estadoCivil: 'Estado civil', hijos: 'Hijos', hobby: 'Hobby', deporte: 'Deporte', salud: 'Cond. médica',
+  };
+
+  let currentScene = 0;
+  let flowIndex = 0;
+  let awaitingInput = null;
+
+  const flow = [
+    { scene: 0, type: 'msg', text: '¡Hola! Soy <strong>Romi</strong>, tu carro guía de Herrajes ROMA 👋' },
+    { scene: 0, type: 'msg', text: 'Vamos a recorrer juntos la empresa: historia, valores, sede y también algunas pautas de seguridad. Y de paso te voy conociendo.' },
+    { scene: 0, type: 'ask', text: 'Antes de arrancar, ¿cómo te llamás?', field: 'nombre', placeholder: 'Tu nombre' },
+    { scene: 0, type: 'msg', text: '¡Encantada, <strong>{nombre}</strong>! 🌿' },
+    { scene: 0, type: 'continue', label: 'Comenzar el recorrido', nextScene: 1 },
+
+    { scene: 1, type: 'msg', text: 'Esto es lo que hacemos en ROMA: herrajes para el movimiento.' },
+    { scene: 1, type: 'quick', text: '¿En qué área vas a trabajar, {nombre}?', field: 'area', options: ['Producción', 'Comercial', 'Administración', 'Logística', 'Otra'] },
+    { scene: 1, type: 'msg', text: '¡Bienvenido/a a <strong>{area}</strong>! Es un área clave de la empresa.' },
+    { scene: 1, type: 'continue', label: 'Siguiente: Historia', nextScene: 2 },
+
+    { scene: 2, type: 'msg', text: 'Mirá nuestra historia: desde un taller hasta tres generaciones de herrajes.' },
+    { scene: 2, type: 'quick', text: '¿Es tu primer trabajo o ya tenés experiencia?', field: 'experiencia', options: ['Primer trabajo', 'Ya tengo experiencia', 'Vengo del rubro'] },
+    { scene: 2, type: 'msg', text: '¡Genial! Tu mirada enriquece al equipo. ✨' },
+    { scene: 2, type: 'continue', label: 'Siguiente: Calidad y valores', nextScene: 3 },
+
+    { scene: 3, type: 'msg', text: 'Estos cuatro pilares nos guían desde 2018 con la certificación ISO 9001.' },
+    { scene: 3, type: 'msg', text: 'Diseño, calidad, innovación y compromiso: son la esencia de ROMA.' },
+    { scene: 3, type: 'continue', label: 'Siguiente: Sede', nextScene: 4 },
+
+    { scene: 4, type: 'msg', text: 'Nuestra sede queda en Florida, provincia de Buenos Aires.' },
+    { scene: 4, type: 'ask', text: '¿En qué localidad vivís vos?', field: 'localidad', placeholder: 'Ej: Vicente López, Florida...' },
+    { scene: 4, type: 'msg', text: '¡<strong>{localidad}</strong>! Listo, anotado.' },
+    { scene: 4, type: 'ask', text: 'Dirección exacta:', field: 'direccion', placeholder: 'Calle y número' },
+    { scene: 4, type: 'ask', text: 'Email de contacto personal:', field: 'email', placeholder: 'tu@email.com' },
+    { scene: 4, type: 'ask', text: 'Teléfono:', field: 'telefono', placeholder: '11 1234-5678' },
+    { scene: 4, type: 'msg', text: 'Datos guardados, {nombre}. ✅' },
+    { scene: 4, type: 'continue', label: 'Siguiente: Seguridad', nextScene: 5 },
+
+    { scene: 5, type: 'msg', text: 'Ahora lo más importante: la seguridad en la fábrica.' },
+    { scene: 5, type: 'msg', text: 'Los dos riesgos principales son el <strong>eléctrico</strong> y el <strong>ruido</strong>. Prestale atención a las tarjetas.' },
+    { scene: 5, type: 'quick', text: '¿Tenés alguna condición médica o alergia que Salud Ocupacional deba conocer?', field: 'salud', options: ['No, ninguna', 'Sí, lo cuento en persona'] },
+    { scene: 5, type: 'msg', text: 'Perfecto, queda registrado. 🌿' },
+    { scene: 5, type: 'continue', label: 'Finalizar recorrido', nextScene: 6 },
+
+    { scene: 6, type: 'msg', text: '¡Llegamos al final, <strong>{nombre}</strong>! 🎉' },
+    { scene: 6, type: 'msg', text: 'Todo lo que me contaste queda guardado para que tu experiencia en ROMA sea genial.' },
+    { scene: 6, type: 'msg', text: 'Bienvenido/a oficialmente a la familia ROMA. 💚' },
+  ];
+
+  // ========== ROMI ==========
+  const romiEl = () => document.getElementById('romi');
+  const mouthEl = () => document.getElementById('romiMouth');
+  const MOUTHS = {
+    smile:    'M 64 55 Q 70 60, 76 55',
+    bigSmile: 'M 62 54 Q 70 63, 78 54',
+    talk:     'M 65 56 Q 70 60, 75 56',
+    talkOpen: 'M 65 55 Q 70 62, 75 55',
+    o:        'M 67 56 Q 70 60, 73 56 Q 70 59, 67 56',
+    think:    'M 65 58 Q 70 55, 75 58'
+  };
+  function setRomiMouth(shape) {
+    const m = mouthEl();
+    if (m && MOUTHS[shape]) m.setAttribute('d', MOUTHS[shape]);
+  }
+  function setRomiMood(mood) {
+    const r = romiEl();
+    if (!r) return;
+    r.classList.remove('happy', 'waving', 'thinking', 'rolling');
+    if (mood === 'happy')    { r.classList.add('happy');    setRomiMouth('bigSmile'); }
+    if (mood === 'waving')   { r.classList.add('waving');   setRomiMouth('smile'); }
+    if (mood === 'thinking') { r.classList.add('thinking'); setRomiMouth('think'); }
+    if (mood === 'rolling')  { r.classList.add('rolling');  setRomiMouth('smile'); }
+    if (mood === 'idle')     { setRomiMouth('smile'); }
+  }
+  let talkTimer = null;
+  function romiTalk() {
+    clearInterval(talkTimer);
+    const shapes = ['talk', 'talkOpen', 'o', 'talk'];
+    let i = 0;
+    talkTimer = setInterval(() => { setRomiMouth(shapes[i % shapes.length]); i++; }, 150);
+  }
+  function romiStopTalk() {
+    clearInterval(talkTimer);
+    setRomiMouth('smile');
+  }
+
+  function moveRomiTo() { /* legacy no-op — Romi lives in the side panel now */ }
+
+  function toggleCollapse() {
+    const p = document.getElementById('romiPanel');
+    p.classList.toggle('collapsed');
+    const ic = document.getElementById('collapseIcon');
+    if (p.classList.contains('collapsed')) {
+      ic.innerHTML = '<polyline points="18 15 12 9 6 15"/>';
+    } else {
+      ic.innerHTML = '<polyline points="6 9 12 15 18 9"/>';
+    }
+  }
+
+  // ======= Mobile chat drawer =======
+  const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+  function openChat() {
+    document.getElementById('romiPanel').classList.add('open');
+    document.getElementById('chatBadge').style.display = 'none';
+    hideChatPreview();
+    setTimeout(() => {
+      const body = document.getElementById('botBody');
+      if (body) body.scrollTop = body.scrollHeight;
+    }, 400);
+  }
+  function closeChat() {
+    document.getElementById('romiPanel').classList.remove('open');
+  }
+  let previewTimer = null;
+  function showChatPreview(text) {
+    if (!isMobile()) return;
+    const panel = document.getElementById('romiPanel');
+    if (panel.classList.contains('open')) return;
+    const prev = document.getElementById('chatPreview');
+    // Tomar solo texto plano
+    const tmp = document.createElement('div');
+    tmp.innerHTML = text;
+    let t = tmp.textContent || '';
+    if (t.length > 90) t = t.slice(0, 88) + '…';
+    prev.textContent = t;
+    prev.classList.add('show');
+    document.getElementById('chatBadge').style.display = 'grid';
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(hideChatPreview, 4500);
+  }
+  function hideChatPreview() {
+    document.getElementById('chatPreview').classList.remove('show');
+  }
+  document.addEventListener('click', (e) => {
+    if (!isMobile()) return;
+    const panel = document.getElementById('romiPanel');
+    const toggle = document.getElementById('chatToggle');
+    const preview = document.getElementById('chatPreview');
+    if (panel.classList.contains('open')) {
+      if (!panel.contains(e.target) && !toggle.contains(e.target)) {
+        closeChat();
+      }
+    }
+    if (preview.contains(e.target)) {
+      openChat();
+    }
+  });
+
+  // ========== HELPERS ==========
+  const interpolate = s => s.replace(/\{(\w+)\}/g, (_, k) => userData[k] || '');
+  const escapeHtml = s => s.replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  function renderPills() {
+    const pills = document.getElementById('pills');
+    pills.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+      const p = document.createElement('div');
+      p.className = 'pill' + (i < currentScene ? ' completed' : '') + (i === currentScene ? ' active' : '');
+      pills.appendChild(p);
+    }
+  }
+
+  function showScene(n) {
+    currentScene = n;
+    document.querySelectorAll('.scene').forEach((s, i) => s.classList.toggle('active', i === n));
+    renderPills();
+    /* panel lateral: no reposition */
+    if (n === 6) {
+      document.getElementById('finalTitle').innerHTML = `¡Bienvenido<br>${userData.nombre || ''}!`;
+    }
+    // Agrego un separador visual de capítulo
+    if (n > 0) addSceneDivider(n);
+  }
+
+  function addSceneDivider(n) {
+    const titles = ['', 'La empresa', 'Historia', 'Calidad y valores', 'Sede', 'Seguridad', 'Bienvenida oficial'];
+    const body = document.getElementById('botBody');
+    const div = document.createElement('div');
+    div.style.cssText = 'text-align:center; font-size:11px; color:var(--ink-soft); margin:12px 0 4px; letter-spacing:0.1em; text-transform:uppercase; opacity:0.65;';
+    div.textContent = '— Cap. 0' + n + ' · ' + (titles[n] || '') + ' —';
+    body.appendChild(div);
+  }
+
+  function addBotMessage(text, isQuestion = false) {
+    const body = document.getElementById('botBody');
+    const div = document.createElement('div');
+    div.className = 'chat-bubble' + (isQuestion ? ' question' : '');
+    div.innerHTML = interpolate(text);
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    showChatPreview(interpolate(text));
+  }
+  function addUserMessage(text) {
+    const body = document.getElementById('botBody');
+    const div = document.createElement('div');
+    div.className = 'chat-user';
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+  function addTyping() {
+    const body = document.getElementById('botBody');
+    const div = document.createElement('div');
+    div.className = 'typing-bubble';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    return div;
+  }
+  function showQuickReplies(opts) {
+    const el = document.getElementById('quickReplies');
+    el.innerHTML = '';
+    if (!opts) return;
+    opts.forEach(opt => {
+      const b = document.createElement('button');
+      b.className = 'qr-btn';
+      b.textContent = opt;
+      b.onclick = () => { document.getElementById('userInput').value = opt; sendMessage(); };
+      el.appendChild(b);
+    });
+  }
+  function showContinueButton(label, nextScene) {
+    const container = document.getElementById('inputContainer');
+    container.innerHTML = `<button class="continue-btn" onclick="goNext(${nextScene})">${label}
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`;
+  }
+  function showInputField(placeholder = 'Escribí tu respuesta...') {
+    const container = document.getElementById('inputContainer');
+    container.innerHTML = `<div class="input-row">
+        <input type="text" id="userInput" placeholder="${placeholder}" autocomplete="off">
+        <button class="send" onclick="sendMessage()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button></div>`;
+    const inp = document.getElementById('userInput');
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+    setTimeout(() => inp.focus(), 100);
+  }
+
+  async function processNext() {
+    if (flowIndex >= flow.length) return;
+    const item = flow[flowIndex];
+    if (item.scene !== currentScene) return;
+
+    if (item.type === 'msg') {
+      const t = addTyping(); setRomiMood('thinking');
+      await wait(600); t.remove(); setRomiMood('idle'); romiTalk();
+      addBotMessage(item.text);
+      await wait(800); romiStopTalk();
+      flowIndex++; await wait(250); processNext(); return;
+    }
+    if (item.type === 'ask') {
+      const t = addTyping(); setRomiMood('thinking');
+      await wait(600); t.remove(); romiTalk();
+      addBotMessage(item.text, true);
+      await wait(700); romiStopTalk(); setRomiMood('waving');
+      awaitingInput = item.field; showInputField(item.placeholder); showQuickReplies(null);
+      flowIndex++; return;
+    }
+    if (item.type === 'quick') {
+      const t = addTyping(); setRomiMood('thinking');
+      await wait(600); t.remove(); romiTalk();
+      addBotMessage(item.text, true);
+      await wait(700); romiStopTalk(); setRomiMood('idle');
+      awaitingInput = item.field; showInputField('Elegí o escribí...'); showQuickReplies(item.options);
+      flowIndex++; return;
+    }
+    if (item.type === 'continue') {
+      setRomiMood('rolling'); showQuickReplies(null); showContinueButton(item.label, item.nextScene);
+      flowIndex++; return;
+    }
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (!text) return;
+    addUserMessage(text);
+    if (awaitingInput) {
+      userData[awaitingInput] = text; updateDataModal(); awaitingInput = null;
+      setRomiMood('happy'); setTimeout(() => setRomiMood('idle'), 800);
+    }
+    input.value = ''; showQuickReplies(null);
+    setTimeout(processNext, 400);
+  }
+
+  function goNext(n) {
+    showScene(n);
+    setRomiMood('rolling');
+    setTimeout(() => setRomiMood('idle'), 1200);
+    document.getElementById('inputContainer').innerHTML = '';
+    showInputField();
+    setTimeout(processNext, 700);
+  }
+
+  function updateDataModal() {
+    const list = document.getElementById('dataList');
+    list.innerHTML = Object.keys(labels).map(k => `
+      <div class="data-row">
+        <div class="data-key">${labels[k]}</div>
+        <div class="data-val ${userData[k] ? '' : 'empty'}">${userData[k] || 'sin completar'}</div>
+      </div>`).join('');
+  }
+  function toggleData() { document.getElementById('dataModal').classList.toggle('open'); }
+
+  // INIT
+  document.getElementById('userInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+  renderPills();
+  updateDataModal();
+  setRomiMood('waving');
+  setTimeout(processNext, 800);
+</script>
+
+</body>
+</html>
