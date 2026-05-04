@@ -1,0 +1,2813 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herrajes ROMA — Tu recorrido con Romi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<template id="__bundler_thumbnail" data-bg-color="#E8F8F2">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#E8F8F2"/>
+    <g transform="translate(600 400)">
+      <ellipse cx="0" cy="180" rx="110" ry="14" fill="#0A1F1A" opacity="0.2"/>
+      <rect x="-35" y="-10" width="70" height="180" rx="12" fill="#4a5159"/>
+      <circle cx="0" cy="-40" r="90" fill="#5d656e"/>
+      <circle cx="0" cy="-40" r="65" fill="#E8F8F2"/>
+      <circle cx="-22" cy="-45" r="11" fill="#0A1F1A"/>
+      <circle cx="22" cy="-45" r="11" fill="#0A1F1A"/>
+      <circle cx="-19" cy="-48" r="3" fill="white"/>
+      <circle cx="25" cy="-48" r="3" fill="white"/>
+      <path d="M -22 -15 Q 0 5 22 -15" stroke="#0A1F1A" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="70" cy="-80" r="22" fill="#3a3f45"/>
+    </g>
+    <text x="600" y="700" text-anchor="middle" font-family="Georgia, serif" font-size="42" font-weight="500" fill="#00684F">Herrajes ROMA</text>
+    <text x="600" y="740" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" fill="#2A3F3A" opacity="0.7">Onboarding con Romi</text>
+  </svg>
+</template>
+<style>
+  :root {
+    --primary: #00B388;
+    --primary-dark: #008F6C;
+    --primary-deeper: #00684F;
+    --primary-pale: #E8F8F2;
+    --ink: #0A1F1A;
+    --ink-soft: #2A3F3A;
+    --paper: #FAFBF9;
+    --paper-warm: #F2F5F1;
+    --line: rgba(10, 31, 26, 0.08);
+    --shadow-md: 0 12px 40px rgba(0, 104, 79, 0.12);
+    --shadow-lg: 0 30px 80px rgba(0, 104, 79, 0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ======= APP LAYOUT: contenido + panel Romi a la derecha ======= */
+  .app { height: 100vh; width: 100vw; }
+
+  /* ======= STAGE (área de contenido) ======= */
+  .stage { position: relative; overflow: hidden; background: var(--paper); width: 100vw; height: 100vh; }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    overflow-y: auto;
+    padding: 80px 440px 80px 72px;
+  }
+  .scene.active { opacity: 1 !important; transform: translateY(0) !important; pointer-events: all !important; z-index: 2; }
+  .scene:not(.active) { opacity: 0 !important; transform: translateY(20px) !important; pointer-events: none !important; z-index: 1; }
+  .scene::-webkit-scrollbar { width: 6px; }
+  .scene::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+
+  /* ======= TOPBAR ======= */
+  .topbar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 22px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 20;
+    background: linear-gradient(180deg, rgba(250,251,249,0.96), rgba(250,251,249,0));
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-logo {
+    width: 44px; height: 44px;
+    background: var(--primary);
+    color: white;
+    display: grid; place-items: center;
+    border-radius: 4px;
+    transform: rotate(45deg);
+    position: relative;
+  }
+  .brand-logo span {
+    transform: rotate(-45deg);
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+  .brand-name {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .brand-tag {
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .progress-pills { display: flex; gap: 6px; }
+  .pill {
+    width: 28px; height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    transition: all 0.4s;
+  }
+  .pill.completed { background: var(--primary); }
+  .pill.active { background: var(--primary); width: 48px; }
+
+  /* ======= CONTENEDOR CENTRAL ======= */
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .chapter-num {
+    font-size: 11px;
+    color: var(--primary);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .scene-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(38px, 4.8vw, 62px);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin-bottom: 22px;
+    text-wrap: pretty;
+  }
+  .scene-title em {
+    color: var(--primary);
+    font-style: italic;
+  }
+
+  .scene-text p {
+    font-size: 15.5px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin-bottom: 14px;
+    max-width: 60ch;
+  }
+
+  /* ======= HERO ======= */
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+  }
+  .hero-inner { text-align: center; max-width: 640px; position: relative; }
+  .hero-decor {
+    position: absolute;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+    opacity: 0.1;
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    animation: floatDecor 8s ease-in-out infinite;
+  }
+  @keyframes floatDecor {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -55%) scale(1.05); }
+  }
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: var(--primary-pale);
+    color: var(--primary-deeper);
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(52px, 7vw, 96px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    margin-bottom: 22px;
+  }
+  .hero-title em { color: var(--primary); font-style: italic; font-weight: 500; }
+  .hero-subtitle {
+    font-size: 18px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .hero-motto {
+    margin-top: 36px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--primary-deeper);
+    opacity: 0.8;
+  }
+
+  /* ======= LAYOUT 2-COL ======= */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .two-col.reverse .col-text { order: 2; }
+
+  /* ======= Timeline de historia ======= */
+  .timeline {
+    position: relative;
+    padding-left: 26px;
+    margin-top: 8px;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 8px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--primary) 0%, var(--primary-pale) 100%);
+  }
+  .tl-item {
+    position: relative;
+    padding: 6px 0 22px 18px;
+  }
+  .tl-item::before {
+    content: "";
+    position: absolute;
+    left: -24px; top: 10px;
+    width: 12px; height: 12px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 3px solid var(--paper);
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+  .tl-year {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--primary-deeper);
+    margin-bottom: 4px;
+  }
+  .tl-text {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  /* ======= Valores como chips ======= */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .value-chip {
+    padding: 18px 20px;
+    background: var(--paper-warm);
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    transition: all 0.3s;
+  }
+  .value-chip:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .value-chip .v-title {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .value-chip .v-desc {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* ======= Productos ======= */
+  .products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .prod {
+    padding: 20px 16px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .prod:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+  }
+  .prod-icon {
+    width: 48px; height: 48px;
+    margin: 0 auto 12px;
+    display: grid; place-items: center;
+    background: var(--primary-pale);
+    border-radius: 12px;
+    color: var(--primary-deeper);
+  }
+  .prod-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .prod-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+
+  /* ======= Certificación card ======= */
+  .cert-card {
+    margin-top: 24px;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--primary-pale), white);
+    border: 1px solid var(--primary);
+    border-radius: 14px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .cert-card .cert-icon {
+    width: 48px; height: 48px;
+    background: var(--primary);
+    color: white;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .cert-card .cert-title {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .cert-card .cert-sub {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
+  /* ======= Dato destacado ======= */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .stat {
+    padding: 18px;
+    background: var(--paper-warm);
+    border-radius: 12px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .stat-lbl {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ======= Sede ubicación ======= */
+  .location-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 28px;
+    border-radius: 18px;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 16px;
+  }
+  .location-address {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    color: white;
+    text-decoration: none;
+    transition: all 0.25s;
+    cursor: pointer;
+  }
+  a.location-address:hover { opacity: 0.88; transform: translateX(2px); }
+  .map-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 5px 11px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(6px);
+    transition: background 0.25s;
+  }
+  a.location-address:hover .map-hint {
+    background: rgba(255,255,255,0.28);
+  }
+  .location-detail {
+    font-size: 14px;
+    opacity: 0.9;
+    line-height: 1.5;
+  }
+  .contact-list {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    display: grid;
+    gap: 8px;
+  }
+  .contact-list .c-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    opacity: 0.95;
+  }
+
+  /* ======= Seguridad ======= */
+  .safety-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .safety-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .safety-card {
+    padding: 18px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .safety-card.danger { border-color: #F4A742; background: linear-gradient(180deg, #FFF8EC, white); }
+  .safety-card.warn   { border-color: #E76F51; background: linear-gradient(180deg, #FFF0ED, white); }
+  .safety-card .sc-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .safety-card .sc-icon {
+    width: 38px; height: 38px;
+    display: grid; place-items: center;
+    border-radius: 10px;
+    background: var(--primary-pale);
+    color: var(--primary-deeper);
+    flex-shrink: 0;
+  }
+  .safety-card.danger .sc-icon { background: #FBE3B5; color: #8A5A00; }
+  .safety-card.warn .sc-icon   { background: #F9D1C6; color: #8A2E18; }
+  .safety-card .sc-title {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .safety-card .sc-list {
+    list-style: none;
+    margin-top: 4px;
+  }
+  .safety-card .sc-list li {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .safety-card .sc-list li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 8px;
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+  }
+  .safety-card.danger .sc-list li::before { background: #F4A742; }
+  .safety-card.warn .sc-list li::before   { background: #E76F51; }
+
+  .noise-meter {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .noise-meter .nm-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  .noise-meter .nm-sub {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+  .nm-bar {
+    height: 14px;
+    background: linear-gradient(90deg, #6CD96B 0%, #F4A742 55%, #E76F51 85%, #C23B22 100%);
+    border-radius: 7px;
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .nm-marker {
+    position: absolute;
+    top: -6px;
+    transform: translateX(-50%);
+    width: 2px; height: 26px;
+    background: var(--ink);
+  }
+  .nm-marker::after {
+    content: attr(data-val);
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .nm-scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 18px;
+  }
+
+  /* ======= Final ======= */
+  .final-scene-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    margin: -80px -80px -160px;
+    padding: 80px;
+  }
+  .final-content { text-align: center; max-width: 560px; }
+  .final-icon {
+    width: 86px; height: 86px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    margin: 0 auto 28px;
+    font-size: 40px;
+    backdrop-filter: blur(10px);
+  }
+  .final-title {
+    font-family: 'Fraunces', serif;
+    font-size: 60px;
+    font-weight: 500;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  .final-text {
+    font-size: 17px;
+    opacity: 0.95;
+    line-height: 1.6;
+  }
+
+  /* ====================================================== */
+  /* ============ ROMI FLOTANTE + GLOBOS GLASS ========== */
+  .romi-panel {
+    position: fixed;
+    z-index: 50;
+    bottom: 24px;
+    right: 24px;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    pointer-events: none;
+  }
+
+  .romi-panel > * { pointer-events: auto; }
+
+  /* ===== Zona Romi ===== */
+  .romi-zone {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-end;
+  }
+  .romi-stage {
+    width: 108px; height: 118px;
+    position: relative;
+    flex-shrink: 0;
+    order: 2;
+  }
+  .romi-shadow {
+    position: absolute;
+    bottom: 2px; left: 50%;
+    transform: translateX(-50%);
+    width: 58px; height: 8px;
+    background: rgba(10, 31, 26, 0.3);
+    border-radius: 50%;
+    filter: blur(5px);
+    animation: romiShadow 2.8s ease-in-out infinite;
+  }
+  .romi {
+    width: 108px;
+    animation: romiBob 2.8s ease-in-out infinite;
+    transform-origin: 70px 18px;
+    filter: drop-shadow(0 10px 24px rgba(10,31,26,0.25));
+  }
+  .romi.happy    { animation: romiHappy 0.8s ease-in-out; }
+  .romi.waving   .romi-arm-right { animation: romiWave 1.2s ease-in-out infinite; transform-origin: 92px 95px; }
+  .romi.thinking .romi-arm-left  { animation: romiThink 1.5s ease-in-out infinite; transform-origin: 38px 95px; }
+  .romi.rolling  { animation: romiSlide 2.4s ease-in-out infinite; }
+
+  @keyframes romiBob {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-2deg); }
+    75% { transform: rotate(2deg); }
+  }
+  @keyframes romiShadow {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+    50%      { transform: translateX(-50%) scale(0.85); opacity: 0.3; }
+  }
+  @keyframes romiHappy {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    40% { transform: translateY(-10px) rotate(-4deg); }
+    70% { transform: translateY(-4px) rotate(3deg); }
+  }
+  @keyframes romiWave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-28deg); }
+    75% { transform: rotate(28deg); }
+  }
+  @keyframes romiThink {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-18deg) translateY(-3px); }
+  }
+  @keyframes romiSlide {
+    0%, 100% { transform: translateX(-6px); }
+    50%      { transform: translateX(6px); }
+  }
+
+  .romi-eye { animation: romiBlink 4s infinite; transform-origin: center; }
+  .romi-eye.right { animation-delay: 0.05s; }
+  @keyframes romiBlink {
+    0%, 94%, 100% { transform: scaleY(1); }
+    96%, 98% { transform: scaleY(0.1); }
+  }
+  .romi-mouth { transition: all 0.3s; stroke: #0A1F1A; }
+
+  /* Etiqueta al costado de Romi, vertical */
+  .romi-name-tag {
+    order: 1;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 5px 12px;
+    border-radius: 14px;
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary-deeper);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    box-shadow: 0 6px 16px rgba(10,31,26,0.1);
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+  .romi-name-tag .status-dot {
+    width: 6px; height: 6px;
+    background: #6CD96B;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2.5px rgba(108, 217, 107, 0.3);
+    animation: pulseDot 2s ease-in-out infinite;
+  }
+  .romi-name-tag .role {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  @keyframes pulseDot {
+    0%, 100% { box-shadow: 0 0 0 2.5px rgba(108, 217, 107, 0.3); }
+    50% { box-shadow: 0 0 0 5px rgba(108, 217, 107, 0.08); }
+  }
+
+  /* ===== Chat area (encima de Romi, globos flotando) ===== */
+  .chat-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+    max-height: 50vh;
+    min-height: 0;
+  }
+
+  .chat-msgs {
+    overflow-y: auto;
+    max-height: 32vh;
+    padding: 4px 4px 4px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    scroll-behavior: smooth;
+    mask-image: linear-gradient(180deg, transparent 0, black 28px, black 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, black 28px, black 100%);
+  }
+  .chat-msgs::-webkit-scrollbar { width: 3px; }
+  .chat-msgs::-webkit-scrollbar-thumb { background: rgba(10,31,26,0.15); border-radius: 2px; }
+
+  /* ===== GLOBO DE ROMI con cola a la derecha (apunta hacia Romi abajo) ===== */
+  .chat-bubble {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 10px 14px;
+    border-radius: 16px 16px 4px 16px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink);
+    max-width: 90%;
+    box-shadow: 0 8px 24px rgba(10,31,26,0.12);
+    border: 1px solid rgba(255,255,255,0.55);
+    animation: msgIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    margin-right: 8px;
+  }
+  .chat-bubble::before {
+    content: "";
+    position: absolute;
+    right: -6px;
+    bottom: 5px;
+    width: 12px; height: 12px;
+    background: inherit;
+    border-right: 1px solid rgba(255,255,255,0.55);
+    border-bottom: 1px solid rgba(10,31,26,0.05);
+    border-radius: 0 0 3px 0;
+    transform: rotate(45deg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .chat-bubble.question {
+    background: rgba(232, 248, 242, 0.92);
+    border-color: rgba(0, 179, 136, 0.3);
+  }
+  .chat-bubble strong { color: var(--primary-deeper); font-weight: 600; }
+
+  /* ===== GLOBO DEL USUARIO ===== */
+  .chat-user {
+    align-self: flex-end;
+    background: var(--primary);
+    color: white;
+    padding: 9px 14px;
+    border-radius: 16px 16px 4px 16px;
+    font-size: 13.5px;
+    font-weight: 500;
+    max-width: 85%;
+    line-height: 1.45;
+    box-shadow: 0 8px 24px rgba(0, 104, 79, 0.3);
+    animation: msgIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    margin-right: 8px;
+  }
+  .chat-user::before {
+    content: "";
+    position: absolute;
+    right: -5px;
+    bottom: 5px;
+    width: 12px; height: 12px;
+    background: var(--primary);
+    border-radius: 0 0 3px 0;
+    transform: rotate(45deg);
+  }
+
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .typing-bubble {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(14px);
+    padding: 10px 14px;
+    border-radius: 16px 16px 4px 16px;
+    display: inline-flex;
+    gap: 4px;
+    width: fit-content;
+    border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: 0 8px 24px rgba(10,31,26,0.12);
+    position: relative;
+    margin-right: 8px;
+  }
+  .typing-bubble::before {
+    content: "";
+    position: absolute;
+    right: -6px; bottom: 5px;
+    width: 12px; height: 12px;
+    background: rgba(255,255,255,0.9);
+    border-right: 1px solid rgba(255,255,255,0.55);
+    border-bottom: 1px solid rgba(10,31,26,0.05);
+    border-radius: 0 0 3px 0;
+    transform: rotate(45deg);
+  }
+  .typing-bubble span {
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: typing 1.4s infinite;
+  }
+  .typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+
+  /* ===== Input (glass) ===== */
+  .chat-input {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+  }
+  .quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+  .qr-btn {
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--primary);
+    color: var(--primary-deeper);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    box-shadow: 0 4px 10px rgba(10,31,26,0.08);
+  }
+  .qr-btn:hover { background: var(--primary); color: white; }
+
+  .input-row {
+    display: flex;
+    gap: 6px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 14px;
+    padding: 3px 3px 3px 14px;
+    border: 1.5px solid rgba(0, 104, 79, 0.15);
+    transition: all 0.2s;
+    box-shadow: 0 8px 24px rgba(10,31,26,0.1);
+    width: 100%;
+  }
+  .input-row:focus-within { border-color: var(--primary); background: white; }
+  .input-row input {
+    flex: 1;
+    border: none;
+    background: none;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 0;
+    color: var(--ink);
+    min-width: 0;
+  }
+  .input-row input::placeholder { color: #94A39E; }
+  .send {
+    width: 32px; height: 32px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    border-radius: 9px;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .send:hover { transform: scale(1.05); background: var(--primary-dark); }
+
+  .continue-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 8px 22px rgba(0, 104, 79, 0.3);
+    width: 100%;
+  }
+  .continue-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+  }
+
+  /* Collapse toggle: permite minimizar el chat para ver la diapositiva */
+  .chat-collapse {
+    position: absolute;
+    top: -6px;
+    right: 6px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: grid; place-items: center;
+    font-size: 14px;
+    z-index: 5;
+    box-shadow: 0 4px 10px rgba(10,31,26,0.1);
+    transition: all 0.2s;
+  }
+  .chat-collapse:hover { color: var(--primary-deeper); border-color: var(--primary); }
+
+  .romi-panel.collapsed .chat-area { display: none; }
+  .romi-panel.collapsed .romi-name-tag { display: none; }
+  .romi-panel.collapsed .chat-collapse { top: -6px; right: 4px; }
+
+  /* Toggle mobile (no hace falta, el panel ya es flotante) */
+  .chat-toggle, .chat-close, .chat-preview { display: none; }
+
+  /* ======= Data FAB ======= */
+  .data-fab {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--line);
+    padding: 9px 14px;
+    border-radius: 22px;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    z-index: 25;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .data-fab:hover { color: var(--primary-deeper); }
+  .data-fab .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; }
+
+  .data-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 31, 26, 0.5);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .data-modal.open { display: flex; }
+  .data-content {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+  }
+  .data-content h3 { font-family: 'Fraunces', serif; font-size: 24px; margin-bottom: 6px; }
+  .data-content .sub { color: var(--ink-soft); font-size: 13px; margin-bottom: 24px; }
+  .data-row {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .data-row:last-child { border: none; }
+  .data-key { font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+  .data-val { font-size: 14px; font-weight: 500; text-align: right; }
+  .data-val.empty { color: #B5BFB9; font-weight: 400; font-style: italic; }
+  .close-x {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--paper-warm);
+    border: none;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--ink-soft);
+  }
+
+  /* ======= Responsive ======= */
+  @media (max-width: 1100px) {
+    .scene { padding: 80px 400px 80px 48px; }
+  }
+
+  /* ============ MOBILE & TABLET PORTRAIT ============ */
+  @media (max-width: 900px) {
+    html, body { height: 100%; }
+    body { overflow: hidden; }
+
+    .stage { height: 100dvh; }
+
+    /* Contenido: ocupa todo el ancho, termina antes del dock de abajo */
+    .scene {
+      padding: 64px 18px calc(110px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .two-col { grid-template-columns: 1fr; gap: 22px; }
+    .two-col.reverse .col-text { order: 0; }
+    .safety-hero { grid-template-columns: 1fr; gap: 16px; }
+    .products { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-row { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .topbar { padding: 12px 14px; background: rgba(250,251,249,0.96); backdrop-filter: blur(10px); }
+    .brand-tag { display: none; }
+    .brand-logo { width: 36px; height: 36px; }
+    .brand-logo span { font-size: 15px; }
+    .brand-name { font-size: 15px; }
+    .progress-pills { gap: 4px; }
+    .data-fab { right: 12px; top: 11px; font-size: 11px; padding: 6px 11px; }
+
+    /* ========== ROMI DOCK móvil: barra inferior, NO tapa texto ========== */
+    .romi-panel {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      top: auto;
+      width: 100%;
+      max-width: none;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 0;
+      gap: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(250,251,249,0.72) 18%, rgba(250,251,249,0.94) 35%, #FAFBF9 100%);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .romi-panel > * { pointer-events: auto; }
+
+    /* Cuando está colapsado: solo se ve una barra compacta con Romi chico al costado */
+    .romi-panel.collapsed { background: rgba(250,251,249,0.95); }
+
+    /* Reordenamos: chat area arriba, zona Romi+input abajo */
+    .chat-area {
+      order: 1;
+      width: 100%;
+      max-height: 42vh;
+      padding: 10px 14px 0;
+    }
+    .chat-msgs {
+      max-height: 28vh;
+      padding-right: 4px;
+      align-items: stretch;
+    }
+    .chat-bubble, .typing-bubble {
+      max-width: 85%;
+      font-size: 13.5px;
+    }
+    .chat-user { max-width: 85%; font-size: 13.5px; }
+
+    .chat-input { padding-top: 8px; }
+
+    /* Zona Romi en mobile: chico, integrado a la barra */
+    .romi-zone {
+      order: 2;
+      padding: 6px 14px 10px;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+    .romi-stage { width: 60px; height: 66px; order: 1; }
+    .romi { width: 60px; filter: drop-shadow(0 4px 10px rgba(10,31,26,0.18)); }
+    .romi-shadow { width: 32px; height: 5px; bottom: 1px; }
+    .romi-name-tag {
+      order: 2;
+      font-size: 12px;
+      padding: 4px 10px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(10,31,26,0.08);
+      box-shadow: none;
+      flex: 0 1 auto;
+    }
+    .romi-name-tag .role { display: none; }
+
+    /* Botón colapsar: estirado a lo ancho arriba del dock, para agarrar fácil */
+    .chat-collapse {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      width: 56px; height: 22px;
+      border-radius: 12px;
+      padding: 0;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(10,31,26,0.08);
+    }
+    .chat-collapse svg { width: 16px; height: 16px; }
+
+    /* === Modo colapsado en mobile: solo una barra de 70px === */
+    .romi-panel.collapsed .chat-area { display: none; }
+    .romi-panel.collapsed .romi-name-tag { display: inline-flex; }
+    .romi-panel.collapsed .romi-zone { padding-top: 30px; }
+
+    /* Input más ancho en mobile */
+    .input-row { padding: 3px 3px 3px 12px; }
+    .input-row input { font-size: 14px; padding: 9px 0; }
+    .qr-btn { font-size: 12px; padding: 7px 13px; }
+
+    /* Botón continuar pleno ancho */
+    .continue-btn { font-size: 14px; padding: 13px; }
+
+    /* === Tipografía escena === */
+    .hero-title { font-size: 56px; line-height: 0.98; }
+    .scene-title { font-size: 34px; line-height: 1.05; }
+    .scene-text p { font-size: 15px; line-height: 1.55; }
+    .chapter-num { font-size: 11px; margin-bottom: 12px; }
+
+    /* === Timeline === */
+    .timeline { padding-left: 20px; }
+    .tl-item { padding-bottom: 18px; }
+    .tl-year { font-size: 14px; }
+    .tl-text { font-size: 13.5px; }
+
+    /* === Values === */
+    .values-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .value-chip { padding: 14px; }
+    .v-title { font-size: 15px; }
+    .v-desc { font-size: 12.5px; }
+
+    /* === Location === */
+    .location-card { padding: 22px; }
+    .location-address { font-size: 20px; }
+    .contact-list { font-size: 13px; }
+
+    /* === Safety === */
+    .safety-grid { grid-template-columns: 1fr; gap: 12px; }
+    .safety-card { padding: 18px; }
+
+    /* === Data modal === */
+    .data-content { padding: 24px 20px; }
+    .data-content h3 { font-size: 20px; }
+  }
+
+  /* ============ TELÉFONOS CHICOS ============ */
+  @media (max-width: 520px) {
+    .scene { padding: 60px 16px calc(100px + env(safe-area-inset-bottom)); }
+    .hero-title { font-size: 44px; }
+    .scene-title { font-size: 28px; }
+    .scene-text p { font-size: 14.5px; }
+    .products { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .prod { padding: 14px; }
+    .prod-name { font-size: 13.5px; }
+    .prod-desc { font-size: 11.5px; }
+    .stat-row { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .stat-num { font-size: 22px; }
+    .stat-lbl { font-size: 10.5px; }
+    .values-grid { grid-template-columns: 1fr; }
+    .safety-grid { grid-template-columns: 1fr; }
+    .wrap { padding: 0; }
+
+    .romi-stage { width: 54px; height: 60px; }
+    .romi { width: 54px; }
+    .romi-name-tag { font-size: 11.5px; padding: 4px 9px; }
+    .chat-msgs { max-height: 24vh; }
+    .chat-bubble, .chat-user, .typing-bubble { font-size: 13px; }
+    .chat-area { padding: 8px 12px 0; }
+    .romi-zone { padding: 4px 12px 8px; }
+  }
+
+  /* ============ Mobile landscape (pantalla baja) ============ */
+  @media (max-height: 560px) and (orientation: landscape) {
+    .romi-stage { width: 50px; height: 56px; }
+    .romi { width: 50px; }
+    .chat-msgs { max-height: 18vh; }
+    .scene { padding: 50px 20px 110px; }
+  }
+
+  
+  /* === Drag handle de Romi === */
+  .romi-drag-handle {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(10,31,26,0.08);
+    color: var(--ink-soft);
+    cursor: grab;
+    display: grid; place-items: center;
+    z-index: 5;
+    box-shadow: 0 4px 10px rgba(10,31,26,0.1);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .romi-drag-handle:active { cursor: grabbing; }
+  .romi-drag-handle svg { width: 14px; height: 14px; pointer-events: none; }
+  .romi-panel.dragging { transition: none !important; }
+  .romi-panel.dragged { right: auto !important; bottom: auto !important; }
+
+  /* === Form multi-campo === */
+  .multi-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(14px);
+    border-radius: 14px;
+    padding: 14px;
+    border: 1.5px solid rgba(0, 104, 79, 0.18);
+    box-shadow: 0 10px 26px rgba(10,31,26,0.12);
+    width: 100%;
+  }
+  .multi-form .mf-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary-deeper);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+  }
+  .multi-form input {
+    width: 100%;
+    padding: 9px 12px;
+    font-family: inherit;
+    font-size: 13.5px;
+    border: 1px solid rgba(10,31,26,0.12);
+    border-radius: 9px;
+    outline: none;
+    background: white;
+    transition: border-color 0.2s;
+    color: var(--ink);
+  }
+  .multi-form input:focus { border-color: var(--primary); }
+  .multi-form input::placeholder { color: #94A39E; }
+  .multi-form .mf-submit {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .multi-form .mf-submit:hover { background: var(--primary-dark); }
+
+  /* === Tarjeta de fundadores === */
+  .founders-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 18px;
+  }
+  .founder {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 8px 24px rgba(10,31,26,0.06);
+  }
+  .founder-photo {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--primary-pale), var(--primary));
+    border-radius: 50%;
+    margin-bottom: 14px;
+    display: grid; place-items: center;
+    color: white;
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+  }
+  .founder-name { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; }
+  .founder-role { font-size: 12px; color: var(--ink-soft); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .founder-text { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); font-style: italic; }
+  .founder-text::before { content: "\201C"; font-family: 'Fraunces', serif; font-size: 32px; color: var(--primary); line-height: 0; vertical-align: -10px; margin-right: 4px; }
+
+  /* === MVV grid === */
+  .mvv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 22px;
+  }
+  .mvv-card {
+    background: white;
+    padding: 22px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    box-shadow: 0 8px 22px rgba(10,31,26,0.05);
+  }
+  .mvv-card.misión { border-top: 4px solid var(--primary); }
+  .mvv-card.visión { border-top: 4px solid #E9A340; }
+  .mvv-card.valores { border-top: 4px solid #7B6BD9; }
+  .mvv-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--primary-pale);
+    display: grid; place-items: center;
+    color: var(--primary-deeper);
+    margin-bottom: 12px;
+  }
+  .mvv-card h3 { font-family: 'Fraunces', serif; font-size: 22px; margin-bottom: 10px; }
+  .mvv-card ul { list-style: none; padding: 0; }
+  .mvv-card li {
+    font-size: 13.5px;
+    line-height: 1.5;
+    padding: 5px 0 5px 16px;
+    position: relative;
+    color: var(--ink-soft);
+  }
+  .mvv-card li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 12px;
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+  }
+
+  /* === Channels grid === */
+  .channels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 22px;
+  }
+  .channel {
+    background: white;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    box-shadow: 0 6px 18px rgba(10,31,26,0.05);
+  }
+  .channel-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .channel-icon {
+    width: 36px; height: 36px;
+    background: var(--primary-pale);
+    border-radius: 10px;
+    color: var(--primary-deeper);
+    display: grid; place-items: center;
+  }
+  .channel-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; }
+  .channel-list { font-size: 12.5px; line-height: 1.65; color: var(--ink-soft); }
+  .channel-list a { color: var(--primary-deeper); text-decoration: none; }
+  .channel-list a:hover { text-decoration: underline; }
+  .channel-list strong { color: var(--ink); font-weight: 500; }
+
+  /* === Eventos & emergencias listas === */
+  .calendar-list, .emergency-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .cal-item, .emer-item {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 18px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 12px rgba(10,31,26,0.04);
+  }
+  .cal-date { font-family: 'Fraunces', serif; font-weight: 600; font-size: 14px; color: var(--primary-deeper); }
+  .cal-name { font-size: 14px; color: var(--ink); }
+  .cal-status {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .cal-status.no-trabaja { background: #FEE9E5; color: #B83A1F; }
+  .cal-status.trabaja { background: var(--primary-pale); color: var(--primary-deeper); }
+  .emer-num { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--primary-deeper); }
+  .emer-name { font-size: 14px; font-weight: 600; }
+  .emer-desc { font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
+  .emer-call {
+    background: var(--primary);
+    color: white;
+    padding: 7px 14px;
+    border-radius: 18px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  /* === RSE === */
+  .rse-card {
+    margin-top: 22px;
+    background: linear-gradient(135deg, #fffaeb 0%, #fef3c7 100%);
+    border: 1px solid #f3d57a;
+    border-radius: 16px;
+    padding: 28px;
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .rse-icon {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: white;
+    display: grid; place-items: center;
+    box-shadow: 0 8px 18px rgba(217, 119, 6, 0.18);
+    color: #b45309;
+  }
+  .rse-card h3 { font-family: 'Fraunces', serif; font-size: 20px; margin-bottom: 8px; color: #78350f; }
+  .rse-card p { font-size: 13.5px; line-height: 1.55; color: #78350f; margin-bottom: 8px; }
+  .rse-card a { color: #b45309; font-weight: 500; }
+
+  /* === Tango Empleados === */
+  .tango-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .tango-step {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 14px;
+    align-items: start;
+    background: white;
+    padding: 16px 18px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 12px rgba(10,31,26,0.04);
+  }
+  .ts-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: grid; place-items: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .ts-title { font-weight: 600; font-size: 14.5px; margin-bottom: 4px; }
+  .ts-text { font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+
+  .tango-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 12px;
+  }
+  .tango-feat {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    box-shadow: 0 6px 16px rgba(10,31,26,0.05);
+  }
+  .tf-icon {
+    width: 42px; height: 42px;
+    border-radius: 11px;
+    background: var(--primary-pale);
+    color: var(--primary-deeper);
+    display: grid; place-items: center;
+    margin-bottom: 12px;
+  }
+  .tf-title { font-family: 'Fraunces', serif; font-size: 18px; margin-bottom: 6px; }
+  .tf-text { font-size: 13px; line-height: 1.55; color: var(--ink-soft); }
+
+  .tango-info {
+    margin-top: 22px;
+    background: linear-gradient(135deg, var(--primary-pale) 0%, #d6f0e3 100%);
+    border: 1px solid rgba(0,104,79,0.15);
+    border-radius: 14px;
+    padding: 18px 22px;
+    display: grid;
+    grid-template-columns: 38px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .ti-icon {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: white;
+    color: var(--primary-deeper);
+    display: grid; place-items: center;
+  }
+  .ti-title { font-weight: 600; font-size: 14.5px; margin-bottom: 4px; color: var(--primary-deeper); }
+  .ti-text { font-size: 13px; line-height: 1.55; color: var(--ink); }
+  .ti-text strong { color: var(--primary-deeper); }
+
+  @media (max-width: 900px) {
+    .tango-steps, .tango-features { grid-template-columns: 1fr; }
+  }
+
+  </style>
+</head>
+<body>
+
+<!-- ============ STAGE ============ -->
+<div class="app">
+<section class="stage">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo"><span>R</span></div>
+      <div>
+        <div class="brand-name">Herrajes ROMA</div>
+        <div class="brand-tag">La marca del movimiento · desde 1968</div>
+      </div>
+    </div>
+    <div class="progress-pills" id="pills"></div>
+  </div>
+
+  <!-- ========== ESCENA 0: Bienvenida ========== -->
+  <div class="scene active" data-scene="0">
+    <div class="wrap hero">
+      <div class="hero-inner">
+        <div class="hero-decor"></div>
+        <div class="hero-badge">Inducción de personal</div>
+        <h1 class="hero-title">Bienvenido<br>a <em>ROMA</em></h1>
+        <p class="hero-subtitle">Somos la empresa argentina referente en herrajes para el movimiento. Te vamos a acompañar en un recorrido para que conozcas la casa.</p>
+        <div class="hero-motto">"La marca del movimiento desde 1968"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 1: La Empresa ========== -->
+  <div class="scene" data-scene="1">
+    <div class="wrap two-col">
+      <div class="col-text">
+        <div class="chapter-num">Capítulo 01 — La empresa</div>
+        <h2 class="scene-title">Somos <em>movimiento</em><br>argentino</h2>
+        <div class="scene-text">
+          <p>Somos una empresa argentina que le ofrece al mercado local y al Mercosur una amplia línea de herrajes para puertas y portones de carpintería metálica y madera: corredizos, levadizos y batientes. También herrajes para lonas de camiones siders, puertas de paso, placard y puertas automáticas.</p>
+          <p>Nuestros esfuerzos están dedicados a ofrecer una solución adecuada a cada proyecto de movimiento, con la más alta tecnología, selección de materiales y calidez en el proceso de compra.</p>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L4 6 v6 c0 5 3.5 9 8 10 4.5-1 8-5 8-10 V6z"/><path d="M9 12 l2 2 4-4"/></svg>
+          </div>
+          <div>
+            <div class="cert-title">ISO 9001:2015 · TÜV Rheinland</div>
+            <div class="cert-sub">Certificados desde 2018 en Sistemas de Gestión de Calidad</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-text">
+        <div class="products">
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg></div>
+            <div class="prod-name">Corredizos</div>
+            <div class="prod-desc">Puertas y portones</div>
+          </div>
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V8l8-4 8 4v12"/><path d="M9 20v-8h6v8"/></svg></div>
+            <div class="prod-name">Levadizos</div>
+            <div class="prod-desc">Portones batientes</div>
+          </div>
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8" cy="12" r="1.5"/><circle cx="16" cy="12" r="1.5"/></svg></div>
+            <div class="prod-name">Camiones siders</div>
+            <div class="prod-desc">Herrajes para lonas</div>
+          </div>
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="1"/><circle cx="15" cy="12" r="1"/></svg></div>
+            <div class="prod-name">Puertas de paso</div>
+            <div class="prod-desc">y placard</div>
+          </div>
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8h16M4 16h16"/><circle cx="8" cy="8" r="2"/><circle cx="16" cy="16" r="2"/></svg></div>
+            <div class="prod-name">Automatización</div>
+            <div class="prod-desc">Puertas y portones</div>
+          </div>
+          <div class="prod">
+            <div class="prod-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="4"/></svg></div>
+            <div class="prod-name">ROMA Labs</div>
+            <div class="prod-desc">Soluciones a medida</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 2: Historia ========== -->
+  <div class="scene" data-scene="2">
+    <div class="wrap two-col reverse">
+      <div class="col-text">
+        <div class="chapter-num">Capítulo 02 — Historia</div>
+        <h2 class="scene-title">De un taller<br>italiano a <em>líderes</em><br>del mercado</h2>
+        <div class="scene-text">
+          <p>Herrajes ROMA es una empresa nacional fundada por inmigrantes italianos. Ángelo Tregnaghi y su hermano Aquiles comenzaron con un taller de patas de hierro para máquinas de coser.</p>
+          <p>Hoy, tres generaciones después, seguimos cuidando lo que nos hizo grandes: el oficio, la innovación y el compromiso con la industria nacional.</p>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">1968</div><div class="stat-lbl">Fundación</div></div>
+          <div class="stat"><div class="stat-num">3</div><div class="stat-lbl">Generaciones</div></div>
+          <div class="stat"><div class="stat-num">+45</div><div class="stat-lbl">Años liderazgo</div></div>
+        </div>
+      </div>
+      <div class="col-text">
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-year">Años '60</div>
+            <div class="tl-text">Ángelo y Aquiles Tregnaghi fundan un taller de patas de hierro para máquinas de coser.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">1968</div>
+            <div class="tl-text">En la esquina de Roca y Talcahuano nace <strong>Herrajes ROMA</strong>, con foco en la industria metalúrgica.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">Década del '80</div>
+            <div class="tl-text">Junto a su hijo Fernando, diversifican las soluciones de movimiento y se transforman en empresa líder del mercado argentino.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">Años '90</div>
+            <div class="tl-text">Expansión tecnológica y apertura de nuevos mercados: kits de herrajes, frentes de placard y complementos para cocinas.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">Nuevo siglo</div>
+            <div class="tl-text">Andrés Tregnaghi toma la posta: más profesionalización, más metros cuadrados, más innovación anual.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 3: Los dueños ========== -->
+  <div class="scene" data-scene="3">
+    <div class="wrap">
+      <div class="chapter-num">Capítulo 03 — Los dueños</div>
+      <h2 class="scene-title">La <em>familia</em><br>que sostiene ROMA</h2>
+      <div class="scene-text" style="max-width: 720px;">
+        <p>Andrés y Ana son la tercera generación de la familia Tregnaghi. Hijos de Fernando y nietos de Ángelo, son quienes hoy llevan adelante la empresa con la misma cercanía y compromiso de siempre.</p>
+      </div>
+      <div class="founders-grid">
+        <div class="founder">
+          <div class="founder-photo">A</div>
+          <div class="founder-name">Andrés Tregnaghi</div>
+          <div class="founder-role">Dirección general</div>
+          <div class="founder-text">Cuando me incorporé a la empresa, mi misión fue elevar la profesionalización de los procesos, sumar tecnología y crecer junto a cada persona del equipo. Bienvenido/a a la familia ROMA.</div>
+        </div>
+        <div class="founder">
+          <div class="founder-photo">A</div>
+          <div class="founder-name">Ana Piubello</div>
+          <div class="founder-role">Dirección</div>
+          <div class="founder-text">En ROMA cuidamos el oficio de hacer las cosas bien: con materiales de primera y atención al detalle. Vos sos parte de eso desde hoy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 4: Misión, Visión, Valores ========== -->
+  <div class="scene" data-scene="4">
+    <div class="wrap">
+      <div class="chapter-num">Capítulo 04 — Misión, visión y valores</div>
+      <h2 class="scene-title">Lo que nos<br><em>mueve</em> cada día</h2>
+      <div class="scene-text" style="max-width: 720px;">
+        <p>Estos son los pilares que guían cada decisión en ROMA. Desde 2018 los respaldamos también con la certificación ISO 9001:2015 de TÜV Rheinland.</p>
+      </div>
+
+      <div class="mvv-grid">
+        <div class="mvv-card misión">
+          <div class="mvv-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
+          <h3>Misión</h3>
+          <ul>
+            <li>Ser referentes en el mercado nacional en el abastecimiento de perfiles, herrajes y accesorios para obras.</li>
+            <li>Brindar productos innovadores, de calidad y fácil instalación.</li>
+          </ul>
+        </div>
+        <div class="mvv-card visión">
+          <div class="mvv-icon" style="background: #fef3c7; color: #b45309;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <h3>Visión</h3>
+          <ul>
+            <li>Profesionalizar a Herrajes ROMA a través del desarrollo e incorporación de recursos humanos y la inversión en tecnología.</li>
+            <li>Desarrollar una operación productiva, comercial y logística integral a 5 años.</li>
+            <li>Fortalecer el reconocimiento de la marca asociada a la confiabilidad y la innovación.</li>
+          </ul>
+        </div>
+        <div class="mvv-card valores">
+          <div class="mvv-icon" style="background: #ede9fe; color: #5b46c2;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h3>Valores</h3>
+          <ul>
+            <li>Valorar y respetar a todos nuestros colaboradores, clientes y proveedores.</li>
+            <li>Adoptar la mejora continua como eje en la toma de decisiones y la ejecución de nuestros procesos.</li>
+            <li>Fomentar el reciclado de los desechos generados en nuestra planta.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 5: RSE ========== -->
+  <div class="scene" data-scene="5">
+    <div class="wrap">
+      <div class="chapter-num">Capítulo 05 — Responsabilidad social</div>
+      <h2 class="scene-title">Lo que <em>devolvemos</em><br>a la sociedad</h2>
+      <div class="scene-text" style="max-width: 720px;">
+        <p>La RSE en Herrajes ROMA es una mirada que reconoce los vínculos y el impacto que tenemos —y recibimos— de la sociedad en la que trabajamos.</p>
+      </div>
+
+      <div class="rse-card">
+        <div class="rse-icon">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6m0 0L9 5m3 3 3-3"/><path d="M3 12c0 5 4 9 9 9s9-4 9-9"/><path d="M5 12a7 7 0 0 1 14 0"/></svg>
+        </div>
+        <div>
+          <h3>Programa Reciclado · Fundación Garrahan</h3>
+          <p>Participamos del programa de Reciclado y Medio Ambiente de la <strong>Fundación Garrahan</strong>, aportando al programa de reciclado de papel para empresas de CABA y Gran Buenos Aires.</p>
+          <p>La fundación tiene la misión de alentar el desarrollo del Hospital de Pediatría Garrahan y atender las necesidades sociales y emocionales de los pacientes y sus familias.</p>
+          <p style="margin-top: 12px;"><a href="https://www.vaporporlospibes.com.ar" target="_blank" rel="noopener">www.vaporporlospibes.com.ar →</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 6: Canales de comunicación ========== -->
+  <div class="scene" data-scene="6">
+    <div class="wrap">
+      <div class="chapter-num">Capítulo 06 — Canales de comunicación</div>
+      <h2 class="scene-title">Cómo <em>conectarnos</em></h2>
+      <div class="scene-text" style="max-width: 720px;">
+        <p>Estos son todos los canales que tenemos disponibles para que te comuniques con cualquier sector de la empresa, según lo que necesites.</p>
+      </div>
+
+      <div class="channels-grid">
+        <div class="channel">
+          <div class="channel-head">
+            <div class="channel-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+            <div class="channel-title">Teléfono</div>
+          </div>
+          <div class="channel-list">
+            <div><strong>4760-2971</strong> · cualquier consulta</div>
+            <div><strong>Fax:</strong> 4761-9862</div>
+          </div>
+        </div>
+
+        <div class="channel">
+          <div class="channel-head">
+            <div class="channel-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+            <div class="channel-title">WhatsApp RR.HH.</div>
+          </div>
+          <div class="channel-list">
+            <div><strong>11 3546-8326</strong></div>
+            <div>Para avisar ausencias o inconvenientes personales.</div>
+          </div>
+        </div>
+
+        <div class="channel" style="grid-column: span 2;">
+          <div class="channel-head">
+            <div class="channel-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+            <div class="channel-title">Correo electrónico</div>
+          </div>
+          <div class="channel-list" style="display:grid; grid-template-columns: 1fr 1fr; gap: 4px 16px;">
+            <div><strong>RR.HH.</strong> <a href="/cdn-cgi/l/email-protection#82f2e7f0f1edece3eec2eae7f0f0e3e8e7f1f0edefe3ace1edeface3f0"><span class="__cf_email__" data-cfemail="4e3e2b3c3d21202f220e262b3c3c2f242b3d3c21232f602d2123602f3c">[email&#160;protected]</span></a></div>
+            <div><strong>Comercial</strong> <a href="/cdn-cgi/l/email-protection#ccbaa9a2b8adbf8ca4a9bebeada6a9bfbea3a1ade2afa3a1e2adbe"><span class="__cf_email__" data-cfemail="c8beada6bca9bb88a0adbabaa9a2adbbbaa7a5a9e6aba7a5e6a9ba">[email&#160;protected]</span></a></div>
+            <div><strong>Abastecimiento</strong> <a href="/cdn-cgi/l/email-protection#90e3e4fff3fbd0f8f5e2e2f1faf5e3e2fffdf1bef3fffdbef1e2"><span class="__cf_email__" data-cfemail="681b1c070b0328000d1a1a09020d1b1a070509460b070546091a">[email&#160;protected]</span></a></div>
+            <div><strong>Administración</strong> <a href="/cdn-cgi/l/email-protection#ec8d88818582859f989e8d8f858382ac84899e9e8d86899f9e83818dc28f8381c28d9e"><span class="__cf_email__" data-cfemail="a4c5c0c9cdcacdd7d0d6c5c7cdcbcae4ccc1d6d6c5cec1d7d6cbc9c58ac7cbc98ac5d6">[email&#160;protected]</span></a></div>
+            <div><strong>Producción</strong> <a href="/cdn-cgi/l/email-protection#7b1d1a190912181a3b131e09091a111e080914161a55181416551a09"><span class="__cf_email__" data-cfemail="21474043534842406149445353404b4452534e4c400f424e4c0f4053">[email&#160;protected]</span></a></div>
+            <div><strong>SGC</strong> <a href="/cdn-cgi/l/email-protection#c9bbacaaa5a8a4a6ba89a1acbbbba8a3acbabba6a4a8e7aaa6a4e7a8bb"><span class="__cf_email__" data-cfemail="394b5c5a555854564a79515c4b4b58535c4a4b565458175a565417584b">[email&#160;protected]</span></a></div>
+          </div>
+        </div>
+
+        <div class="channel">
+          <div class="channel-head">
+            <div class="channel-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <div class="channel-title">No conformidades / Mejoras</div>
+          </div>
+          <div class="channel-list">
+            <div>Carga de NC u OM del puesto o sector.</div>
+            <div><a href="https://docs.google.com/forms/d/e/1FAIpQLSfYtsJZaTVBzCB4EarJqH6pl7umLciN1goszR92qaspeoAQrg/viewform" target="_blank" rel="noopener">Formulario online →</a></div>
+          </div>
+        </div>
+
+        <div class="channel">
+          <div class="channel-head">
+            <div class="channel-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg></div>
+            <div class="channel-title">Web y redes</div>
+          </div>
+          <div class="channel-list">
+            <div><a href="https://www.herrajesroma.com.ar" target="_blank" rel="noopener">herrajesroma.com.ar</a></div>
+            <div>Facebook · Instagram · Twitter · Pinterest <strong>@herrajesroma</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 7: Eventos especiales ========== -->
+  <div class="scene" data-scene="7">
+    <div class="wrap">
+      <div class="chapter-num">Capítulo 07 — Eventos especiales</div>
+      <h2 class="scene-title">Tu <em>calendario</em><br>en ROMA</h2>
+      <div class="scene-text" style="max-width: 720px;">
+        <p>Estas son las fechas más importantes que afectan al calendario laboral. A esto se suman los demás feriados y días no laborables a los que la empresa adhiere.</p>
+      </div>
+
+      <div class="calendar-list">
+        <div class="cal-item"><div class="cal-date">1 de enero</div><div class="cal-name">Año Nuevo</div><div class="cal-status no-trabaja">No se trabaja</div></div>
+        <div class="cal-item"><div class="cal-date">Jueves Santo</div><div class="cal-name">Semana Santa</div><div class="cal-status trabaja">Se trabaja</div></div>
+        <div class="cal-item"><div class="cal-date">Viernes Santo</div><div class="cal-name">Conmemoración religiosa</div><div class="cal-status no-trabaja">No se trabaja</div></div>
+        <div class="cal-item"><div class="cal-date">1 de mayo</div><div class="cal-name">Día del Trabajador</div><div class="cal-status no-trabaja">No se trabaja</div></div>
+        <div class="cal-item"><div class="cal-date">7 de septiembre</div><div class="cal-name">Día del Metalúrgico</div><div class="cal-status no-trabaja">No se trabaja</div></div>
+        <div class="cal-item"><div class="cal-date">24 de diciembre</div><div class="cal-name">Víspera de Navidad</div><div class="cal-status trabaja">Se trabaja</div></div>
+        <div class="cal-item"><div class="cal-date">25 de diciembre</div><div class="cal-name">Navidad</div><div class="cal-status no-trabaja">No se trabaja</div></div>
+        <div class="cal-item"><div class="cal-date">31 de diciembre</div><div class="cal-name">Año Nuevo</div><div class="cal-status no-trabaja">No se trabaja</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 8: Sede y datos personales ========== -->
+  <div class="scene" data-scene="8">
+    <div class="wrap two-col reverse">
+      <div class="col-text">
+        <div class="chapter-num">Capítulo 08 — Sede y datos personales</div>
+        <h2 class="scene-title">Nuestra <em>casa</em><br>y la tuya</h2>
+        <div class="scene-text">
+          <p>La sede de Herrajes ROMA está en Florida, provincia de Buenos Aires. Acá funcionan la fábrica, las oficinas y el laboratorio ROMA Labs.</p>
+          <p>Aprovechamos esta parada para que dejes los datos que Recursos Humanos necesita registrar.</p>
+        </div>
+      </div>
+      <div class="col-text">
+        <div class="location-card">
+          <a class="location-address" href="https://www.google.com/maps/search/?api=1&query=Gral.+Roca+4615,+Florida,+Buenos+Aires,+Argentina" target="_blank" rel="noopener">
+            📍 Gral. Roca 4615<br>(B1604BZS) Florida
+            <span class="map-hint">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Ver en Google Maps
+            </span>
+          </a>
+          <div class="location-detail">Buenos Aires · Argentina</div>
+          <div class="contact-list">
+            <div class="c-row">📞 (54-11) 4761-4701</div>
+            <div class="c-row">📞 (54-11) 4761-9862 / 4760-2971</div>
+            <div class="c-row">✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1462717a607567547c716666757e7167667b79753a777b793a7566">[email&#160;protected]</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 9: Seguridad ========== -->
+  <div class="scene" data-scene="9">
+    <div class="wrap">
+      <div class="chapter-num">Capítulo 09 — Seguridad</div>
+      <h2 class="scene-title">Tu seguridad es<br>nuestra <em>prioridad</em></h2>
+
+      <div class="safety-hero">
+        <div class="scene-text">
+          <p>En la fábrica convivimos con dos riesgos principales: <strong>riesgo eléctrico</strong> y <strong>exposición a ruido</strong>. Lo importante: conocer las reglas básicas y usar siempre los elementos de protección.</p>
+        </div>
+        <div class="noise-meter">
+          <div class="nm-title">Medidor de ruido</div>
+          <div class="nm-sub">Límite legal de exposición laboral: 85 dB (8 h)</div>
+          <div class="nm-bar">
+            <div class="nm-marker" style="left: 40%" data-val="60 dB · oficina"></div>
+            <div class="nm-marker" style="left: 66%" data-val="85 dB · límite"></div>
+            <div class="nm-marker" style="left: 88%" data-val="100 dB · fábrica"></div>
+          </div>
+          <div class="nm-scale">
+            <span>40</span><span>60</span><span>80</span><span>100</span><span>120 dB</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="safety-grid">
+        <div class="safety-card danger">
+          <div class="sc-head">
+            <div class="sc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 L4 14 h7 l-1 8 9-12 h-7 z"/></svg></div>
+            <div class="sc-title">Riesgo eléctrico</div>
+          </div>
+          <ul class="sc-list">
+            <li>No manipular tableros ni equipos energizados sin autorización.</li>
+            <li>Reportar inmediatamente cables dañados o enchufes sueltos.</li>
+            <li>No mojar zonas con instalación eléctrica activa.</li>
+            <li>Solo personal capacitado puede intervenir conexiones.</li>
+          </ul>
+        </div>
+        <div class="safety-card warn">
+          <div class="sc-head">
+            <div class="sc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12c2-5 7-8 9-8s7 3 9 8-7 8-9 8-7-3-9-8z"/><circle cx="12" cy="12" r="2"/></svg></div>
+            <div class="sc-title">Exposición a ruido</div>
+          </div>
+          <ul class="sc-list">
+            <li>Protectores auditivos obligatorios en zonas señalizadas.</li>
+            <li>Exposición controlada: máximo 8 h a 85 dB.</li>
+            <li>Si no te escuchás hablar normal, ponete protección.</li>
+            <li>Chequeos auditivos periódicos por Salud Ocupacional.</li>
+          </ul>
+        </div>
+        <div class="safety-card">
+          <div class="sc-head">
+            <div class="sc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L4 7v6c0 5 3 8 8 9 5-1 8-4 8-9V7z"/></svg></div>
+            <div class="sc-title">EPP obligatorio</div>
+          </div>
+          <ul class="sc-list">
+            <li>Casco, calzado de seguridad y lentes en zonas operativas.</li>
+            <li>Guantes y protección auditiva según tarea.</li>
+            <li>Ropa adecuada (sin sueltos cerca de máquinas).</li>
+          </ul>
+        </div>
+        <div class="safety-card">
+          <div class="sc-head">
+            <div class="sc-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 v20 M2 12 h20"/></svg></div>
+            <div class="sc-title">Emergencias</div>
+          </div>
+          <ul class="sc-list">
+            <li>Conocé la salida de emergencia más cercana a tu sector.</li>
+            <li>Ante incidente: alertar a Mantenimiento (interno 122).</li>
+            <li>Simulacros periódicos: participación obligatoria.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin-top: 36px; margin-bottom: 6px;">Números útiles ante emergencias</h3>
+      <p class="scene-text" style="margin-bottom: 0;"><span style="color: var(--ink-soft); font-size: 13px;">Atención las 24 horas, los 365 días del año.</span></p>
+      <div class="emergency-list">
+        <div class="emer-item"><div class="emer-num">911</div><div><div class="emer-name">Emergencias</div><div class="emer-desc">Central de atención · línea directa con Policía Federal.</div></div><a class="emer-call" href="tel:911">Llamar</a></div>
+        <div class="emer-item"><div class="emer-num">107</div><div><div class="emer-name">SAME</div><div class="emer-desc">Servicio gratuito de ambulancias y atención médica de urgencia.</div></div><a class="emer-call" href="tel:107">Llamar</a></div>
+        <div class="emer-item"><div class="emer-num">100</div><div><div class="emer-name">Bomberos</div><div class="emer-desc">Atención las 24 hs.</div></div><a class="emer-call" href="tel:100">Llamar</a></div>
+        <div class="emer-item"><div class="emer-num">103</div><div><div class="emer-name">Defensa Civil</div><div class="emer-desc">Atención las 24 hs.</div></div><a class="emer-call" href="tel:103">Llamar</a></div>
+        <div class="emer-item"><div class="emer-num">144</div><div><div class="emer-name">Línea Mujer</div><div class="emer-desc">Atención a mujeres víctimas de violencia de género. Orientación y derivación.</div></div><a class="emer-call" href="tel:144">Llamar</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 10: Tango Empleados ========== -->
+  <div class="scene" data-scene="10">
+    <div class="wrap">
+      <div class="chapter-num">Capítulo 10 — Tango Empleados</div>
+      <h2 class="scene-title">Tu portal de<br><em>autogestión</em></h2>
+      <div class="scene-text" style="max-width: 720px;">
+        <p><strong>Tango Empleados</strong> es la plataforma con la que vas a poder ver tus recibos de sueldo, cargar licencias y firmar documentos electrónicamente. Acá te dejo cómo arrancar.</p>
+      </div>
+
+      <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin-top: 28px; margin-bottom: 12px;">Cómo darte de alta</h3>
+      <div class="tango-steps">
+        <div class="tango-step">
+          <div class="ts-num">1</div>
+          <div class="ts-body">
+            <div class="ts-title">Te mandamos la invitación</div>
+            <div class="ts-text">Recursos Humanos te envía una invitación al mail particular que tenés informado.</div>
+          </div>
+        </div>
+        <div class="tango-step">
+          <div class="ts-num">2</div>
+          <div class="ts-body">
+            <div class="ts-title">Abrí el correo</div>
+            <div class="ts-text">Vas a recibir un mail con el link para ingresar a Tango Empleados.</div>
+          </div>
+        </div>
+        <div class="tango-step">
+          <div class="ts-num">3</div>
+          <div class="ts-body">
+            <div class="ts-title">Creá tu cuenta</div>
+            <div class="ts-text">Logueate o creá una cuenta en Tango Empleados con el mismo correo al que llegó la invitación.</div>
+          </div>
+        </div>
+        <div class="tango-step">
+          <div class="ts-num">4</div>
+          <div class="ts-body">
+            <div class="ts-title">Ingresá a tu portal</div>
+            <div class="ts-text">A los pocos minutos del alta, ya podés acceder a tu portal personal para gestionar recibos, licencias y documentos.</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-family: 'Fraunces', serif; font-size: 22px; margin-top: 36px; margin-bottom: 12px;">Qué podés hacer</h3>
+      <div class="tango-features">
+        <div class="tango-feat">
+          <div class="tf-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="tf-title">Mis recibos</div>
+          <div class="tf-text">Ver y dar conformidad a recibos de sueldo e informes de impuesto a las ganancias. Podés filtrar por estado, previsualizar y descargar. Si no estás de acuerdo, se detalla el motivo.</div>
+        </div>
+        <div class="tango-feat">
+          <div class="tf-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="tf-title">Licencias</div>
+          <div class="tf-text">Cargá enfermedad, estudios, trámites y demás licencias (excepto vacacionales, permisos de salida y gremiales). <strong>Importante:</strong> antes de cargarla, tener el OK de RR.HH.</div>
+        </div>
+        <div class="tango-feat">
+          <div class="tf-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 11l-4 4 4 4"/><path d="M20 7H8a4 4 0 0 0-4 4v4"/></svg>
+          </div>
+          <div class="tf-title">Documentos</div>
+          <div class="tf-text">Firmá electrónicamente permisos y notas de vacaciones. Antes de firmar, revisá las fechas en "Ver Documento". Si algo no coincide, marcá "No conforme" y dejá el motivo.</div>
+        </div>
+      </div>
+
+      <div class="tango-info">
+        <div class="ti-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </div>
+        <div>
+          <div class="ti-title">Cómo se aprueba una licencia</div>
+          <div class="ti-text">Al cargarla queda <strong>pendiente de aprobación</strong>. Pasa primero por tu superior y después por RR.HH. La licencia queda confirmada cuando llega al estado <strong>Aprobada</strong> o <strong>Transferida</strong>. En cada paso te llega un mail con el estado.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ESCENA 11: Cierre ========== -->
+  <div class="scene" data-scene="11">
+    <div class="final-scene-wrap">
+      <div class="final-content">
+        <div class="final-icon">🎉</div>
+        <h2 class="final-title" id="finalTitle">¡Bienvenido<br>a Herrajes ROMA!</h2>
+        <p class="final-text">Esperamos que hayas disfrutado el recorrido. Todo lo que me contaste nos va a ayudar a que tu experiencia acá sea inolvidable.</p>
+        <div style="margin-top: 28px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <button onclick="downloadDataJSON()" style="background: rgba(255,255,255,0.95); color: var(--primary-deeper); border: none; padding: 12px 22px; border-radius: 22px; font-family: inherit; font-weight: 600; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar mis datos
+          </button>
+          <button onclick="toggleData()" style="background: transparent; color: white; border: 1.5px solid rgba(255,255,255,0.5); padding: 12px 22px; border-radius: 22px; font-family: inherit; font-weight: 600; font-size: 13.5px; cursor: pointer;">
+            Ver resumen
+          </button>
+        </div>
+        <div class="hero-motto" style="margin-top: 32px; opacity: 0.85; color: white;">"La marca del movimiento desde 1968"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROMI PANEL LATERAL ============ -->
+<aside class="romi-panel" id="romiPanel">
+  <button class="romi-drag-handle" id="romiDragHandle" aria-label="Mover a Romi" title="Arrastrame para moverme">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/>
+      <circle cx="15" cy="6" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="15" cy="18" r="1.4"/>
+    </svg>
+  </button>
+  <button class="chat-collapse" onclick="toggleCollapse()" aria-label="Minimizar">
+    <svg id="collapseIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="romi-zone">
+    <div class="romi-stage">
+      <div class="romi-shadow"></div>
+      <svg class="romi" id="romi" viewBox="0 0 140 150" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4a5159"/>
+          <stop offset="40%" stop-color="#5d656e"/>
+          <stop offset="60%" stop-color="#5d656e"/>
+          <stop offset="100%" stop-color="#333840"/>
+        </linearGradient>
+        <radialGradient id="wheelGrad" cx="0.35" cy="0.32" r="0.85">
+          <stop offset="0%" stop-color="#6a7278"/>
+          <stop offset="55%" stop-color="#3a3f45"/>
+          <stop offset="100%" stop-color="#1f2226"/>
+        </radialGradient>
+        <radialGradient id="faceGrad" cx="0.5" cy="0.4" r="0.7">
+          <stop offset="0%" stop-color="#F5FBF8"/>
+          <stop offset="100%" stop-color="#D5EDE2"/>
+        </radialGradient>
+        <radialGradient id="hubGrad" cx="0.35" cy="0.35" r="0.7">
+          <stop offset="0%" stop-color="#5a6168"/>
+          <stop offset="100%" stop-color="#23262a"/>
+        </radialGradient>
+        <linearGradient id="handGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFE9C7"/>
+          <stop offset="100%" stop-color="#F0C98E"/>
+        </linearGradient>
+      </defs>
+
+      <path d="M 66 22 Q 64 10, 74 8 Q 84 8, 84 18 L 84 26" fill="none" stroke="#2a2e33" stroke-width="4" stroke-linecap="round"/>
+      <path d="M 66 22 Q 64 10, 74 8 Q 84 8, 84 18 L 84 26" fill="none" stroke="#5d656e" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+
+      <g class="romi-arm-left">
+        <path d="M 58 82 Q 44 86, 36 96" stroke="#333840" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M 58 82 Q 44 86, 36 96" stroke="#5d656e" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <circle cx="35" cy="97" r="7" fill="url(#handGrad)" stroke="#333840" stroke-width="1.5"/>
+        <path d="M 31 94 L 29 91 M 33 92 L 31 89 M 36 91 L 35 88" stroke="#a57848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7"/>
+      </g>
+
+      <g class="romi-arm-right">
+        <path d="M 82 82 Q 96 80, 106 72" stroke="#333840" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M 82 82 Q 96 80, 106 72" stroke="#5d656e" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <circle cx="107" cy="71" r="7" fill="url(#handGrad)" stroke="#333840" stroke-width="1.5"/>
+        <path d="M 112 70 L 114 67 M 110 67 L 112 64 M 107 65 L 107 62" stroke="#a57848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7"/>
+      </g>
+
+      <g id="romi-body">
+        <rect x="57" y="56" width="26" height="84" rx="5" fill="#1a1c1e" opacity="0.35" transform="translate(1.5, 2.5)"/>
+        <rect x="57" y="56" width="26" height="84" rx="5" fill="url(#barGrad)"/>
+        <rect x="59.5" y="58" width="2.5" height="80" rx="1.2" fill="#8a9198" opacity="0.5"/>
+        <rect x="78.5" y="58" width="2.5" height="80" rx="1.2" fill="#1a1c1e" opacity="0.45"/>
+        <g>
+          <circle cx="70" cy="92" r="4" fill="#1a1c1e"/>
+          <circle cx="70" cy="92" r="4" fill="none" stroke="#8a9198" stroke-width="0.6" opacity="0.5"/>
+          <circle cx="69" cy="91" r="1" fill="#a5acb2" opacity="0.75"/>
+        </g>
+        <g>
+          <circle cx="70" cy="126" r="4" fill="#1a1c1e"/>
+          <circle cx="70" cy="126" r="4" fill="none" stroke="#8a9198" stroke-width="0.6" opacity="0.5"/>
+          <circle cx="69" cy="125" r="1" fill="#a5acb2" opacity="0.75"/>
+        </g>
+      </g>
+
+      <g id="romi-head">
+        <circle cx="70" cy="46" r="30" fill="url(#wheelGrad)"/>
+        <circle cx="70" cy="46" r="30" fill="none" stroke="#1a1c1e" stroke-width="1"/>
+        <circle cx="70" cy="46" r="25" fill="none" stroke="#8a9198" stroke-width="0.8" opacity="0.4"/>
+        <circle cx="70" cy="46" r="21" fill="url(#faceGrad)"/>
+        <circle cx="70" cy="46" r="21" fill="none" stroke="#00684F" stroke-width="1.2" opacity="0.35"/>
+        <ellipse cx="64" cy="38" rx="9" ry="4" fill="white" opacity="0.5"/>
+
+        <g class="romi-eye left">
+          <ellipse cx="62.5" cy="45" rx="4" ry="5" fill="white" stroke="#0A1F1A" stroke-width="0.8"/>
+          <circle cx="63" cy="46" r="2.6" fill="#0A1F1A"/>
+          <circle cx="63.8" cy="44.8" r="0.9" fill="white"/>
+        </g>
+        <g class="romi-eye right">
+          <ellipse cx="77.5" cy="45" rx="4" ry="5" fill="white" stroke="#0A1F1A" stroke-width="0.8"/>
+          <circle cx="78" cy="46" r="2.6" fill="#0A1F1A"/>
+          <circle cx="78.8" cy="44.8" r="0.9" fill="white"/>
+        </g>
+
+        <path d="M 58 38 Q 62 36.5, 66 38" stroke="#0A1F1A" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.85"/>
+        <path d="M 74 38 Q 78 36.5, 82 38" stroke="#0A1F1A" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.85"/>
+
+        <circle cx="57" cy="53" r="2.2" fill="#FF8FA9" opacity="0.5"/>
+        <circle cx="83" cy="53" r="2.2" fill="#FF8FA9" opacity="0.5"/>
+
+        <path class="romi-mouth" id="romiMouth" d="M 64 55 Q 70 60, 76 55" fill="none" stroke-width="2" stroke-linecap="round"/>
+
+        <g>
+          <circle cx="92" cy="28" r="8" fill="url(#hubGrad)"/>
+          <circle cx="92" cy="28" r="8" fill="none" stroke="#15171a" stroke-width="0.8"/>
+          <circle cx="92" cy="28" r="5" fill="none" stroke="#8a9198" stroke-width="0.5" opacity="0.5"/>
+          <circle cx="90" cy="26" r="1.4" fill="#a5acb2" opacity="0.75"/>
+        </g>
+
+        <g id="romi-tie">
+          <path d="M 63 73 L 67 69 L 67 76 Z" fill="#00684F"/>
+          <path d="M 77 73 L 73 69 L 73 76 Z" fill="#00684F"/>
+          <rect x="67" y="70" width="6" height="5" rx="0.8" fill="#00B388"/>
+          <rect x="69" y="70" width="2" height="5" fill="#00684F" opacity="0.5"/>
+        </g>
+      </g>
+    </svg>
+    </div>
+    <div class="romi-name-tag">
+      <span class="status-dot"></span>
+      Romi
+      <span class="role">· tu guía</span>
+    </div>
+  </div>
+
+  <div class="chat-area">
+    <div class="chat-msgs" id="botBody"></div>
+    <div class="chat-input">
+      <div class="quick-replies" id="quickReplies"></div>
+      <div id="inputContainer">
+        <div class="input-row">
+          <input type="text" id="userInput" placeholder="Escribí tu respuesta..." autocomplete="off">
+          <button class="send" onclick="sendMessage()" aria-label="Enviar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+</div><!-- /.app -->
+
+<!-- Mobile: botón flotante para abrir el chat -->
+<button class="chat-toggle" id="chatToggle" onclick="openChat()" aria-label="Abrir chat con Romi">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <span class="badge" id="chatBadge" style="display:none">•</span>
+</button>
+
+<!-- Mobile: preview del último mensaje -->
+<div class="chat-preview" id="chatPreview"></div>
+
+<!-- ====== DATA FAB & MODAL ====== -->
+<button class="data-fab" onclick="toggleData()">
+  <span class="dot"></span> Mis datos
+</button>
+
+<div class="data-modal" id="dataModal" onclick="if(event.target===this)toggleData()">
+  <div class="data-content">
+    <button class="close-x" onclick="toggleData()">×</button>
+    <h3>Tus datos</h3>
+    <div class="sub">Información que Romi recolectó durante el recorrido</div>
+    <div id="dataList"></div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const userData = {
+    nombre: null, apellido: null, dni: null, fechaNac: null,
+    direccion: null, localidad: null, codigoPostal: null, provincia: null,
+    email: null, telefono: null,
+    estadoCivil: null, hijos: null,
+    contactoEmergencia: null, telefonoEmergencia: null,
+    salud: null,
+    experiencia: null, area: null,
+    hobby: null, deporte: null,
+    fechaIngreso: new Date().toISOString().split('T')[0],
+  };
+  const labels = {
+    nombre: 'Nombre', apellido: 'Apellido', dni: 'DNI', fechaNac: 'Fecha nacimiento',
+    direccion: 'Dirección', localidad: 'Localidad', codigoPostal: 'CP', provincia: 'Provincia',
+    email: 'Email', telefono: 'Teléfono',
+    estadoCivil: 'Estado civil', hijos: 'Hijos',
+    contactoEmergencia: 'Contacto emergencia', telefonoEmergencia: 'Tel. emergencia',
+    salud: 'Cond. médica',
+    experiencia: 'Experiencia', area: 'Área',
+    hobby: 'Hobby', deporte: 'Deporte',
+    fechaIngreso: 'Fecha ingreso',
+  };
+
+  // ============================================================
+  // 📊 ENVÍO A GOOGLE SHEETS
+  // ------------------------------------------------------------
+  // Para que los datos se envíen automáticamente a una planilla:
+  //
+  // 1. Abrí Google Sheets > creá una planilla nueva
+  // 2. Menú Extensiones > Apps Script
+  // 3. Pegá este código (reemplazando lo que haya):
+  //
+  //    function doPost(e) {
+  //      const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  //      const data = JSON.parse(e.postData.contents);
+  //      if (sheet.getLastRow() === 0) {
+  //        sheet.appendRow(Object.keys(data));
+  //      }
+  //      sheet.appendRow(Object.values(data).map(v => v == null ? '' : v));
+  //      return ContentService.createTextOutput(JSON.stringify({ok:true}))
+  //        .setMimeType(ContentService.MimeType.JSON);
+  //    }
+  //
+  // 4. Implementar > Nueva implementación > Aplicación web
+  //    - Ejecutar como: Yo
+  //    - Quién tiene acceso: Cualquier usuario
+  //    - Copiá la URL del Web App
+  //
+  // 5. Pegá esa URL acá abajo (reemplazando la cadena vacía):
+  // ============================================================
+  const SHEETS_WEBHOOK_URL = '';
+
+  let currentScene = 0;
+  let flowIndex = 0;
+  let awaitingInput = null;
+
+  const flow = [
+    { scene: 0, type: 'msg', text: '¡Hola! Soy <strong>Romi</strong>, tu guía en Herrajes ROMA 👋' },
+    { scene: 0, type: 'msg', text: 'Te doy la bienvenida en nombre de Recursos Humanos. Vamos a recorrer juntos la empresa: historia, valores, dueños, comunicación, eventos y seguridad.' },
+    { scene: 0, type: 'ask', text: 'Antes de arrancar, ¿cómo te llamás?', field: 'nombre', placeholder: 'Tu nombre' },
+    { scene: 0, type: 'msg', text: '¡Encantada, <strong>{nombre}</strong>! 🌿 Si en algún momento querés moverme, agarrame del manijita arriba a la izquierda y arrastrame.' },
+    { scene: 0, type: 'continue', label: 'Comenzar el recorrido', nextScene: 1 },
+
+    { scene: 1, type: 'msg', text: 'Esto es lo que hacemos en ROMA: herrajes para el movimiento.' },
+    { scene: 1, type: 'quick', text: '¿En qué área vas a trabajar, {nombre}?', field: 'area', options: ['Producción', 'Comercial', 'Administración', 'Logística', 'Otra'] },
+    { scene: 1, type: 'msg', text: '¡Bienvenido/a a <strong>{area}</strong>! Es un área clave de la empresa.' },
+    { scene: 1, type: 'continue', label: 'Siguiente: Historia', nextScene: 2 },
+
+    { scene: 2, type: 'msg', text: 'Mirá nuestra historia: desde un taller de patas de hierro hasta tres generaciones de herrajes.' },
+    { scene: 2, type: 'quick', text: '¿Es tu primer trabajo o ya tenés experiencia?', field: 'experiencia', options: ['Primer trabajo', 'Ya tengo experiencia', 'Vengo del rubro'] },
+    { scene: 2, type: 'msg', text: '¡Genial! Tu mirada enriquece al equipo. ✨' },
+    { scene: 2, type: 'continue', label: 'Siguiente: Los dueños', nextScene: 3 },
+
+    { scene: 3, type: 'msg', text: 'ROMA es una empresa familiar. Andrés y Ana son la tercera generación, hijos de Fernando y nietos de Ángelo.' },
+    { scene: 3, type: 'msg', text: 'Te van a recibir con la misma cercanía con que recibieron a cada persona que pasó por acá.' },
+    { scene: 3, type: 'continue', label: 'Siguiente: Misión, Visión y Valores', nextScene: 4 },
+
+    { scene: 4, type: 'msg', text: 'Estos son los pilares que nos guían cada día en ROMA.' },
+    { scene: 4, type: 'msg', text: 'Diseño, calidad, innovación y compromiso: son la esencia.' },
+    { scene: 4, type: 'continue', label: 'Siguiente: RSE', nextScene: 5 },
+
+    { scene: 5, type: 'msg', text: 'Acá tenés algo importante para nosotros: nuestra Responsabilidad Social Empresaria.' },
+    { scene: 5, type: 'msg', text: 'Participamos del programa de reciclado de la Fundación Garrahan, ayudando al Hospital de Pediatría.' },
+    { scene: 5, type: 'continue', label: 'Siguiente: Canales de comunicación', nextScene: 6 },
+
+    { scene: 6, type: 'msg', text: 'Estos son todos los canales para comunicarte con la empresa.' },
+    { scene: 6, type: 'msg', text: 'Para ausencias o avisos urgentes, el WhatsApp de RR.HH. es el más rápido.' },
+    { scene: 6, type: 'continue', label: 'Siguiente: Eventos especiales', nextScene: 7 },
+
+    { scene: 7, type: 'msg', text: 'Estos son los días no laborables y feriados que afectan tu calendario.' },
+    { scene: 7, type: 'msg', text: 'Anotá los principales: 7 de septiembre (Día del Metalúrgico) y los feriados nacionales.' },
+    { scene: 7, type: 'continue', label: 'Siguiente: Sede y datos', nextScene: 8 },
+
+    { scene: 8, type: 'msg', text: 'Nuestra sede queda en Florida, provincia de Buenos Aires.' },
+    { scene: 8, type: 'msg', text: 'Ahora necesito completar algunos datos tuyos para Recursos Humanos.' },
+    { scene: 8, type: 'multi', text: 'Completá tu información personal:', fields: [
+      { field: 'apellido', placeholder: 'Apellido', label: 'Apellido' },
+      { field: 'dni', placeholder: 'DNI (sin puntos)', label: 'DNI', type: 'tel' },
+      { field: 'fechaNac', placeholder: 'dd/mm/aaaa', label: 'Fecha de nacimiento' },
+      { field: 'estadoCivil', placeholder: 'Soltero/a, casado/a...', label: 'Estado civil' },
+      { field: 'hijos', placeholder: '0, 1, 2...', label: 'Cantidad de hijos' },
+    ]},
+    { scene: 8, type: 'msg', text: 'Bárbaro {nombre}, ahora tu domicilio en una sola pasada.' },
+    { scene: 8, type: 'multi', text: 'Tu domicilio actual:', fields: [
+      { field: 'direccion', placeholder: 'Calle y número', label: 'Calle y número' },
+      { field: 'localidad', placeholder: 'Localidad', label: 'Localidad' },
+      { field: 'codigoPostal', placeholder: 'CP', label: 'Código postal', type: 'tel' },
+      { field: 'provincia', placeholder: 'Provincia', label: 'Provincia' },
+    ]},
+    { scene: 8, type: 'multi', text: 'Tus datos de contacto:', fields: [
+      { field: 'email', placeholder: 'tu@email.com', label: 'Email personal', type: 'email' },
+      { field: 'telefono', placeholder: '11 1234-5678', label: 'Teléfono', type: 'tel' },
+    ]},
+    { scene: 8, type: 'multi', text: 'Y un contacto en caso de emergencia:', fields: [
+      { field: 'contactoEmergencia', placeholder: 'Nombre del contacto', label: 'Nombre del contacto' },
+      { field: 'telefonoEmergencia', placeholder: 'Teléfono', label: 'Teléfono', type: 'tel' },
+    ]},
+    { scene: 8, type: 'msg', text: 'Datos guardados, {nombre}. ✅' },
+    { scene: 8, type: 'continue', label: 'Siguiente: Seguridad', nextScene: 9 },
+
+    { scene: 9, type: 'msg', text: 'Lo más importante: la seguridad en la fábrica.' },
+    { scene: 9, type: 'msg', text: 'Los dos riesgos principales son el <strong>eléctrico</strong> y el <strong>ruido</strong>. Prestale atención a las tarjetas.' },
+    { scene: 9, type: 'msg', text: 'Y guardá estos teléfonos de emergencia: 911 / 107 / 100 / 103 / 144.' },
+    { scene: 9, type: 'quick', text: '¿Tenés alguna condición médica o alergia que Salud Ocupacional deba conocer?', field: 'salud', options: ['No, ninguna', 'Sí, lo cuento en persona'] },
+    { scene: 9, type: 'msg', text: 'Perfecto, queda registrado. 🌿' },
+    { scene: 9, type: 'continue', label: 'Siguiente: Tango Empleados', nextScene: 10 },
+
+    { scene: 10, type: 'msg', text: 'Una herramienta clave para tu día a día: <strong>Tango Empleados</strong>.' },
+    { scene: 10, type: 'msg', text: 'Pronto te va a llegar la invitación por mail. Mirate los pasos para darte de alta y cómo usar cada sección.' },
+    { scene: 10, type: 'continue', label: 'Finalizar recorrido', nextScene: 11 },
+
+    { scene: 11, type: 'msg', text: '¡Llegamos al final, <strong>{nombre}</strong>! 🎉' },
+    { scene: 11, type: 'msg', text: 'Voy a guardar todo lo que me contaste para Recursos Humanos.' },
+    { scene: 11, type: 'submit', text: 'Enviando datos...' },
+    { scene: 11, type: 'msg', text: 'Bienvenido/a oficialmente a la familia ROMA. 💚' },
+  ];
+
+  // ========== ROMI ==========
+  const romiEl = () => document.getElementById('romi');
+  const mouthEl = () => document.getElementById('romiMouth');
+  const MOUTHS = {
+    smile:    'M 64 55 Q 70 60, 76 55',
+    bigSmile: 'M 62 54 Q 70 63, 78 54',
+    talk:     'M 65 56 Q 70 60, 75 56',
+    talkOpen: 'M 65 55 Q 70 62, 75 55',
+    o:        'M 67 56 Q 70 60, 73 56 Q 70 59, 67 56',
+    think:    'M 65 58 Q 70 55, 75 58'
+  };
+  function setRomiMouth(shape) {
+    const m = mouthEl();
+    if (m && MOUTHS[shape]) m.setAttribute('d', MOUTHS[shape]);
+  }
+  function setRomiMood(mood) {
+    const r = romiEl();
+    if (!r) return;
+    r.classList.remove('happy', 'waving', 'thinking', 'rolling');
+    if (mood === 'happy')    { r.classList.add('happy');    setRomiMouth('bigSmile'); }
+    if (mood === 'waving')   { r.classList.add('waving');   setRomiMouth('smile'); }
+    if (mood === 'thinking') { r.classList.add('thinking'); setRomiMouth('think'); }
+    if (mood === 'rolling')  { r.classList.add('rolling');  setRomiMouth('smile'); }
+    if (mood === 'idle')     { setRomiMouth('smile'); }
+  }
+  let talkTimer = null;
+  function romiTalk() {
+    clearInterval(talkTimer);
+    const shapes = ['talk', 'talkOpen', 'o', 'talk'];
+    let i = 0;
+    talkTimer = setInterval(() => { setRomiMouth(shapes[i % shapes.length]); i++; }, 150);
+  }
+  function romiStopTalk() {
+    clearInterval(talkTimer);
+    setRomiMouth('smile');
+  }
+
+  function moveRomiTo() { /* legacy no-op — Romi lives in the side panel now */ }
+
+  function toggleCollapse() {
+    const p = document.getElementById('romiPanel');
+    p.classList.toggle('collapsed');
+    const ic = document.getElementById('collapseIcon');
+    if (p.classList.contains('collapsed')) {
+      ic.innerHTML = '<polyline points="18 15 12 9 6 15"/>';
+    } else {
+      ic.innerHTML = '<polyline points="6 9 12 15 18 9"/>';
+    }
+  }
+
+  // ======= Mobile chat drawer =======
+  const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+  function openChat() {
+    document.getElementById('romiPanel').classList.add('open');
+    document.getElementById('chatBadge').style.display = 'none';
+    hideChatPreview();
+    setTimeout(() => {
+      const body = document.getElementById('botBody');
+      if (body) body.scrollTop = body.scrollHeight;
+    }, 400);
+  }
+  function closeChat() {
+    document.getElementById('romiPanel').classList.remove('open');
+  }
+  let previewTimer = null;
+  function showChatPreview(text) {
+    if (!isMobile()) return;
+    const panel = document.getElementById('romiPanel');
+    if (panel.classList.contains('open')) return;
+    const prev = document.getElementById('chatPreview');
+    // Tomar solo texto plano
+    const tmp = document.createElement('div');
+    tmp.innerHTML = text;
+    let t = tmp.textContent || '';
+    if (t.length > 90) t = t.slice(0, 88) + '…';
+    prev.textContent = t;
+    prev.classList.add('show');
+    document.getElementById('chatBadge').style.display = 'grid';
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(hideChatPreview, 4500);
+  }
+  function hideChatPreview() {
+    document.getElementById('chatPreview').classList.remove('show');
+  }
+  document.addEventListener('click', (e) => {
+    if (!isMobile()) return;
+    const panel = document.getElementById('romiPanel');
+    const toggle = document.getElementById('chatToggle');
+    const preview = document.getElementById('chatPreview');
+    if (panel.classList.contains('open')) {
+      if (!panel.contains(e.target) && !toggle.contains(e.target)) {
+        closeChat();
+      }
+    }
+    if (preview.contains(e.target)) {
+      openChat();
+    }
+  });
+
+  // ========== HELPERS ==========
+  const interpolate = s => s.replace(/\{(\w+)\}/g, (_, k) => userData[k] || '');
+  const escapeHtml = s => s.replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  function renderPills() {
+    const pills = document.getElementById('pills');
+    pills.innerHTML = '';
+    const total = 12;
+    for (let i = 0; i < total; i++) {
+      const p = document.createElement('div');
+      p.className = 'pill' + (i < currentScene ? ' completed' : '') + (i === currentScene ? ' active' : '');
+      pills.appendChild(p);
+    }
+  }
+
+  function showScene(n) {
+    currentScene = n;
+    document.querySelectorAll('.scene').forEach((s, i) => s.classList.toggle('active', i === n));
+    renderPills();
+    /* panel lateral: no reposition */
+    if (n === 11) {
+      const ft = document.getElementById('finalTitle');
+      if (ft) ft.innerHTML = '¡Bienvenido<br>' + (userData.nombre || '') + '!';
+    }
+    // Agrego un separador visual de capítulo
+    if (n > 0) addSceneDivider(n);
+  }
+
+  function addSceneDivider(n) {
+    const titles = ['', 'La empresa', 'Historia', 'Los dueños', 'Misión, Visión y Valores', 'RSE', 'Comunicación', 'Eventos especiales', 'Sede y datos', 'Seguridad', 'Tango Empleados', 'Bienvenida oficial'];
+    const body = document.getElementById('botBody');
+    const div = document.createElement('div');
+    div.style.cssText = 'text-align:center; font-size:11px; color:var(--ink-soft); margin:12px 0 4px; letter-spacing:0.1em; text-transform:uppercase; opacity:0.65;';
+    const num = String(n).padStart(2, '0');
+    div.textContent = '— Cap. ' + num + ' · ' + (titles[n] || '') + ' —';
+    body.appendChild(div);
+  }
+
+  function addBotMessage(text, isQuestion = false) {
+    const body = document.getElementById('botBody');
+    const div = document.createElement('div');
+    div.className = 'chat-bubble' + (isQuestion ? ' question' : '');
+    div.innerHTML = interpolate(text);
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    showChatPreview(interpolate(text));
+  }
+  function addUserMessage(text) {
+    const body = document.getElementById('botBody');
+    const div = document.createElement('div');
+    div.className = 'chat-user';
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+  function addTyping() {
+    const body = document.getElementById('botBody');
+    const div = document.createElement('div');
+    div.className = 'typing-bubble';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    return div;
+  }
+  function showQuickReplies(opts) {
+    const el = document.getElementById('quickReplies');
+    el.innerHTML = '';
+    if (!opts) return;
+    opts.forEach(opt => {
+      const b = document.createElement('button');
+      b.className = 'qr-btn';
+      b.textContent = opt;
+      b.onclick = () => { document.getElementById('userInput').value = opt; sendMessage(); };
+      el.appendChild(b);
+    });
+  }
+  function showContinueButton(label, nextScene) {
+    const container = document.getElementById('inputContainer');
+    container.innerHTML = `<button class="continue-btn" onclick="goNext(${nextScene})">${label}
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`;
+  }
+  function showInputField(placeholder = 'Escribí tu respuesta...') {
+    const container = document.getElementById('inputContainer');
+    container.innerHTML = `<div class="input-row">
+        <input type="text" id="userInput" placeholder="${placeholder}" autocomplete="off">
+        <button class="send" onclick="sendMessage()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button></div>`;
+    const inp = document.getElementById('userInput');
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+    setTimeout(() => inp.focus(), 100);
+  }
+
+  async function processNext() {
+    if (flowIndex >= flow.length) return;
+    const item = flow[flowIndex];
+    if (item.scene !== currentScene) return;
+
+    if (item.type === 'msg') {
+      const t = addTyping(); setRomiMood('thinking');
+      await wait(600); t.remove(); setRomiMood('idle'); romiTalk();
+      addBotMessage(item.text);
+      await wait(800); romiStopTalk();
+      flowIndex++; await wait(250); processNext(); return;
+    }
+    if (item.type === 'ask') {
+      const t = addTyping(); setRomiMood('thinking');
+      await wait(600); t.remove(); romiTalk();
+      addBotMessage(item.text, true);
+      await wait(700); romiStopTalk(); setRomiMood('waving');
+      awaitingInput = item.field; showInputField(item.placeholder); showQuickReplies(null);
+      flowIndex++; return;
+    }
+    if (item.type === 'quick') {
+      const t = addTyping(); setRomiMood('thinking');
+      await wait(600); t.remove(); romiTalk();
+      addBotMessage(item.text, true);
+      await wait(700); romiStopTalk(); setRomiMood('idle');
+      awaitingInput = item.field; showInputField('Elegí o escribí...'); showQuickReplies(item.options);
+      flowIndex++; return;
+    }
+    if (item.type === 'continue') {
+      setRomiMood('rolling'); showQuickReplies(null); showContinueButton(item.label, item.nextScene);
+      flowIndex++; return;
+    }
+    if (item.type === 'multi') {
+      const t = addTyping(); setRomiMood('thinking');
+      await wait(500); t.remove(); romiTalk();
+      addBotMessage(item.text, true);
+      await wait(700); romiStopTalk(); setRomiMood('idle');
+      showMultiForm(item.fields);
+      flowIndex++; return;
+    }
+    if (item.type === 'submit') {
+      const t = addTyping(); setRomiMood('thinking');
+      await wait(500); t.remove();
+      addBotMessage(item.text);
+      await wait(400);
+      const ok = await submitToSheets();
+      if (ok) {
+        addBotMessage('Listo, todo enviado correctamente. ✅');
+      } else {
+        addBotMessage('Guardé tus datos localmente. Si querés sincronizarlos, hacé click <a href="#" onclick="downloadDataJSON();return false;" style="color:var(--primary-deeper);font-weight:600;">acá para descargarlos</a>.');
+      }
+      flowIndex++; await wait(400); processNext(); return;
+    }
+  }
+
+  // ===== Multi-form: pregunta varios campos en una sola pasada =====
+  function showMultiForm(fields) {
+    const container = document.getElementById('inputContainer');
+    const html = [
+      '<form class="multi-form" id="multiForm" onsubmit="submitMultiForm(event); return false;">'
+    ];
+    fields.forEach((f, i) => {
+      const t = f.type || 'text';
+      const autoFocus = i === 0 ? 'autofocus' : '';
+      html.push(`<div><div class="mf-title">${f.label}</div><input type="${t}" name="${f.field}" placeholder="${f.placeholder}" ${autoFocus} required></div>`);
+    });
+    html.push('<button type="submit" class="mf-submit">Guardar y continuar</button>');
+    html.push('</form>');
+    container.innerHTML = html.join('');
+    showQuickReplies(null);
+    setTimeout(() => {
+      const first = document.querySelector('#multiForm input');
+      if (first) first.focus();
+    }, 100);
+  }
+
+  function submitMultiForm(e) {
+    if (e) e.preventDefault();
+    const form = document.getElementById('multiForm');
+    if (!form) return;
+    const inputs = form.querySelectorAll('input');
+    const summary = [];
+    inputs.forEach(inp => {
+      const name = inp.name;
+      const val = inp.value.trim();
+      if (val) {
+        userData[name] = val;
+        summary.push(val);
+      }
+    });
+    addUserMessage(summary.join(' · '));
+    updateDataModal();
+    setRomiMood('happy'); setTimeout(() => setRomiMood('idle'), 800);
+    showInputField();
+    setTimeout(processNext, 400);
+  }
+
+  // ===== Envío a Google Sheets =====
+  async function submitToSheets() {
+    if (!SHEETS_WEBHOOK_URL) {
+      console.warn('No SHEETS_WEBHOOK_URL configured — skipping remote sync.');
+      // Guardo en localStorage por si las dudas
+      try { localStorage.setItem('romi-data-' + Date.now(), JSON.stringify(userData)); } catch(e){}
+      return false;
+    }
+    try {
+      // Apps Script con doPost requiere fetch sin custom headers para evitar preflight
+      await fetch(SHEETS_WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(userData),
+      });
+      return true;
+    } catch(e) {
+      console.error('Sheets submit failed:', e);
+      try { localStorage.setItem('romi-data-' + Date.now(), JSON.stringify(userData)); } catch(e){}
+      return false;
+    }
+  }
+
+  function downloadDataJSON() {
+    const fileName = 'datos-' + (userData.nombre || 'usuario') + '-' + (userData.apellido || '') + '.json';
+    const blob = new Blob([JSON.stringify(userData, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ===== Drag de Romi =====
+  function initRomiDrag() {
+    const panel = document.getElementById('romiPanel');
+    const handle = document.getElementById('romiDragHandle');
+    if (!panel || !handle) return;
+    let dragging = false, startX = 0, startY = 0, startLeft = 0, startTop = 0;
+
+    function onDown(e) {
+      dragging = true;
+      const rect = panel.getBoundingClientRect();
+      startLeft = rect.left;
+      startTop = rect.top;
+      const pt = e.touches ? e.touches[0] : e;
+      startX = pt.clientX;
+      startY = pt.clientY;
+      panel.classList.add('dragging', 'dragged');
+      panel.style.left = startLeft + 'px';
+      panel.style.top = startTop + 'px';
+      panel.style.bottom = 'auto';
+      panel.style.right = 'auto';
+      e.preventDefault();
+    }
+    function onMove(e) {
+      if (!dragging) return;
+      const pt = e.touches ? e.touches[0] : e;
+      let nx = startLeft + (pt.clientX - startX);
+      let ny = startTop + (pt.clientY - startY);
+      const w = panel.offsetWidth;
+      const h = panel.offsetHeight;
+      nx = Math.max(8, Math.min(window.innerWidth - w - 8, nx));
+      ny = Math.max(8, Math.min(window.innerHeight - h - 8, ny));
+      panel.style.left = nx + 'px';
+      panel.style.top = ny + 'px';
+      e.preventDefault();
+    }
+    function onUp() {
+      if (!dragging) return;
+      dragging = false;
+      panel.classList.remove('dragging');
+    }
+
+    handle.addEventListener('mousedown', onDown);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    handle.addEventListener('touchstart', onDown, {passive:false});
+    window.addEventListener('touchmove', onMove, {passive:false});
+    window.addEventListener('touchend', onUp);
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (!text) return;
+    addUserMessage(text);
+    if (awaitingInput) {
+      userData[awaitingInput] = text; updateDataModal(); awaitingInput = null;
+      setRomiMood('happy'); setTimeout(() => setRomiMood('idle'), 800);
+    }
+    input.value = ''; showQuickReplies(null);
+    setTimeout(processNext, 400);
+  }
+
+  function goNext(n) {
+    showScene(n);
+    setRomiMood('rolling');
+    setTimeout(() => setRomiMood('idle'), 1200);
+    document.getElementById('inputContainer').innerHTML = '';
+    showInputField();
+    setTimeout(processNext, 700);
+  }
+
+  function updateDataModal() {
+    const list = document.getElementById('dataList');
+    list.innerHTML = Object.keys(labels).map(k => `
+      <div class="data-row">
+        <div class="data-key">${labels[k]}</div>
+        <div class="data-val ${userData[k] ? '' : 'empty'}">${userData[k] || 'sin completar'}</div>
+      </div>`).join('');
+  }
+  function toggleData() { document.getElementById('dataModal').classList.toggle('open'); }
+
+  // INIT
+  document.getElementById('userInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+  renderPills();
+  updateDataModal();
+  setRomiMood('waving');
+  initRomiDrag();
+  setTimeout(processNext, 800);
+</script>
+
+</body>
+</html>
